@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>OSMutexPostPart3_3</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library OSMutexPostPart3_3</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ucert.html#"><span class="id" title="library">ucert</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_defs.html#"><span class="id" title="library">os_code_defs</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mathlib.html#"><span class="id" title="library">mathlib</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutex_common.html#"><span class="id" title="library">OSMutex_common</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="lab.html#"><span class="id" title="library">lab</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostPart3_3_1.html#"><span class="id" title="library">OSMutexPostPart3_3_1</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostPart3_3_1a.html#"><span class="id" title="library">OSMutexPostPart3_3_1a</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostPart3_3_3.html#"><span class="id" title="library">OSMutexPostPart3_3_3</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostPart3_3_3a.html#"><span class="id" title="library">OSMutexPostPart3_3_3a</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostPart3_3_5.html#"><span class="id" title="library">OSMutexPostPart3_3_5</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostPart3_3_5a.html#"><span class="id" title="library">OSMutexPostPart3_3_5a</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostPure.html#"><span class="id" title="library">OSMutexPostPure</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="gen_lemmas.html#"><span class="id" title="library">gen_lemmas</span></a>.<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">code_scope</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="MutexPostNoUnliftSuccReturn"><span class="id" title="lemma">MutexPostNoUnliftSuccReturn</span></a> : <a class="idref" href="gen_lemmas.html#gen_MutexPostNoUnliftSuccReturn"><span class="id" title="definition">gen_MutexPostNoUnliftSuccReturn</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">unfold_event</span> := <span class="id" title="tactic">unfold</span> <a class="idref" href="OSQInvDef.html#AEventNode"><span class="id" title="definition">AEventNode</span></a>; <span class="id" title="tactic">unfold</span> <a class="idref" href="OSQInvDef.html#AOSEvent"><span class="id" title="definition">AOSEvent</span></a>; <span class="id" title="tactic">unfold</span> <a class="idref" href="OSQInvDef.html#AEventData"><span class="id" title="definition">AEventData</span></a>; <span class="id" title="tactic">unfold</span> <a class="idref" href="OSQInvDef.html#AOSEventTbl"><span class="id" title="definition">AOSEventTbl</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">unfold_tcb</span> := <span class="id" title="tactic">unfold</span> <a class="idref" href="OSTCBInvDef.html#AOSTCBList"><span class="id" title="definition">AOSTCBList</span></a>; <span class="id" title="tactic">unfold</span> <a class="idref" href="OSTCBInvDef.html#tcbdllseg"><span class="id" title="definition">tcbdllseg</span></a>; <span class="id" title="tactic">unfold</span> <a class="idref" href="OSTCBInvDef.html#V_OSTCBPrev"><span class="id" title="definition">V_OSTCBPrev</span></a>; <span class="id" title="tactic">unfold</span> <a class="idref" href="OSTCBInvDef.html#V_OSTCBNext"><span class="id" title="definition">V_OSTCBNext</span></a>; <span class="id" title="tactic">unfold</span> <a class="idref" href="BaseAsrtDef.html#dllseg"><span class="id" title="definition">dllseg</span></a>; <span class="id" title="tactic">fold</span> <a class="idref" href="BaseAsrtDef.html#dllseg"><span class="id" title="definition">dllseg</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

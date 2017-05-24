@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>memdata</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library memdata</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+The physical memory is modelled as a partial function mapping addresses
+to abstract　machine values. An address is a pair of memory blocks
+and offsets. We use a positive number to represent the index number of
+ memory blocks,　and offsets have the type of Z. A ``memory value'' is a
+byte-sized quantity that　describes the current content of a memory cell.
+It can be either a concrete 8-bit　integer, a byte-sized fragment of an
+opaque pointer PtrByte(b,i,n),　a special constan  for the
+NULL pointer, or the special　constant UNDEF  that represents uninitialized memory.
+PtrByte(b,i,n)　represents the n-th (0&lt;= n &lt;=3) byte for the 32-bit address
+value (b,i).　Our formalization for addresses and memory values are the
+same as those in Compcert.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="include.html#"><span class="id" title="library">include</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+ Memory blocks 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="block"><span class="id" title="definition">block</span></a> :=<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#positive"><span class="id" title="inductive">positive</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+Block offset 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="offset"><span class="id" title="definition">offset</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+ Memory addresses 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span>  <a name="addr"><span class="id" title="definition">addr</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a> <a class="idref" href="memdata.html#block"><span class="id" title="definition">block</span></a> <a class="idref" href="memdata.html#offset"><span class="id" title="definition">offset</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of the values stored in each machine byte
+It follows the similar definition used in CompCert.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="memval"><span class="id" title="inductive">memval</span></a> : <span class="id" title="keyword">Set</span> :=<br/>
+&nbsp;| <a name="Undef"><span class="id" title="constructor">Undef</span></a> : <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a><br/>
+&nbsp;| <a name="Byte"><span class="id" title="constructor">Byte</span></a> : <a class="idref" href="Integers.html#byte"><span class="id" title="abbreviation">byte</span></a> -&gt; <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a><br/>
+&nbsp;| <a name="Pointer"><span class="id" title="constructor">Pointer</span></a> : <a class="idref" href="memdata.html#block"><span class="id" title="definition">block</span></a> -&gt; <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> -&gt; <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a><br/>
+&nbsp;| <a name="MNull"><span class="id" title="constructor">MNull</span></a> :<a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="mvallist"><span class="id" title="definition">mvallist</span></a>: <span class="id" title="keyword">Type</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+ Encoding and decoding integers
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+The following functions are used to convert
+integers to  the length-n byte list.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Local</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">Z_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a name="encode_int"><span class="id" title="definition">encode_int</span></a> (<span class="id" title="var">n</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<span class="id" title="var">x</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) {<span class="id" title="keyword">struct</span> <span class="id" title="var">n</span>}: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="Integers.html#byte"><span class="id" title="abbreviation">byte</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#n"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">m</span> =&gt; <a class="idref" href="Integers.html#Byte.repr"><span class="id" title="definition">Byte.repr</span></a> <a class="idref" href="memdata.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="memdata.html#encode_int"><span class="id" title="definition">encode_int</span></a> <span class="id" title="var">m</span> (<a class="idref" href="memdata.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#66073ffd934badf1f6e703023820601f"><span class="id" title="notation">/</span></a> 256)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a name="decode_int"><span class="id" title="definition">decode_int</span></a> (<span class="id" title="var">l</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="Integers.html#byte"><span class="id" title="abbreviation">byte</span></a>): <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#l"><span class="id" title="variable">l</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> =&gt; 0<br/>
+&nbsp;&nbsp;| <span class="id" title="var">b</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="var">l&acute;</span> =&gt; <a class="idref" href="Integers.html#Byte.unsigned"><span class="id" title="definition">Byte.unsigned</span></a> <span class="id" title="var">b</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> <a class="idref" href="memdata.html#decode_int"><span class="id" title="definition">decode_int</span></a> <span class="id" title="var">l&acute;</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">*</span></a> 256<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="encode_int_length"><span class="id" title="lemma">encode_int_length</span></a>:<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">sz</span> <span class="id" title="var">x</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a>(<a class="idref" href="memdata.html#encode_int"><span class="id" title="definition">encode_int</span></a> <a class="idref" href="memdata.html#sz"><span class="id" title="variable">sz</span></a> <a class="idref" href="memdata.html#x"><span class="id" title="variable">x</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="memdata.html#sz"><span class="id" title="variable">sz</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="inj_bytes"><span class="id" title="definition">inj_bytes</span></a> (<span class="id" title="var">bl</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="Integers.html#byte"><span class="id" title="abbreviation">byte</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#map"><span class="id" title="definition">List.map</span></a> <a class="idref" href="memdata.html#Byte"><span class="id" title="constructor">Byte</span></a> <a class="idref" href="memdata.html#bl"><span class="id" title="variable">bl</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a name="proj_bytes"><span class="id" title="definition">proj_bytes</span></a> (<span class="id" title="var">vl</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="Integers.html#byte"><span class="id" title="abbreviation">byte</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#vl"><span class="id" title="variable">vl</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Byte"><span class="id" title="constructor">Byte</span></a> <span class="id" title="var">b</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="var">vl&acute;</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#proj_bytes"><span class="id" title="definition">proj_bytes</span></a> <span class="id" title="var">vl&acute;</span> <span class="id" title="keyword">with</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> | <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">bl</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a>(<span class="id" title="var">b</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="var">bl</span>) <span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Remark</span> <a name="length_inj_bytes"><span class="id" title="lemma">length_inj_bytes</span></a>:<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">bl</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> (<a class="idref" href="memdata.html#inj_bytes"><span class="id" title="definition">inj_bytes</span></a> <a class="idref" href="memdata.html#bl"><span class="id" title="variable">bl</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="memdata.html#bl"><span class="id" title="variable">bl</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Remark</span> <a name="proj_inj_bytes"><span class="id" title="lemma">proj_inj_bytes</span></a>:<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">bl</span>, <a class="idref" href="memdata.html#proj_bytes"><span class="id" title="definition">proj_bytes</span></a> (<a class="idref" href="memdata.html#inj_bytes"><span class="id" title="definition">inj_bytes</span></a> <a class="idref" href="memdata.html#bl"><span class="id" title="variable">bl</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="memdata.html#bl"><span class="id" title="variable">bl</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="inj_proj_bytes"><span class="id" title="lemma">inj_proj_bytes</span></a>:<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">cl</span> <span class="id" title="var">bl</span>, <a class="idref" href="memdata.html#proj_bytes"><span class="id" title="definition">proj_bytes</span></a> <a class="idref" href="memdata.html#cl"><span class="id" title="variable">cl</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="memdata.html#bl"><span class="id" title="variable">bl</span></a> -&gt; <a class="idref" href="memdata.html#cl"><span class="id" title="variable">cl</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="memdata.html#inj_bytes"><span class="id" title="definition">inj_bytes</span></a> <a class="idref" href="memdata.html#bl"><span class="id" title="variable">bl</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a name="inj_pointer"><span class="id" title="definition">inj_pointer</span></a> (<span class="id" title="var">n</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<span class="id" title="var">b</span>: <a class="idref" href="memdata.html#block"><span class="id" title="definition">block</span></a>) (<span class="id" title="var">ofs</span>: <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a>) {<span class="id" title="keyword">struct</span> <span class="id" title="var">n</span>}: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#n"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">m</span> =&gt; <a class="idref" href="memdata.html#Pointer"><span class="id" title="constructor">Pointer</span></a> <a class="idref" href="memdata.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="memdata.html#ofs"><span class="id" title="variable">ofs</span></a> <span class="id" title="var">m</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="memdata.html#inj_pointer"><span class="id" title="definition">inj_pointer</span></a> <span class="id" title="var">m</span> <a class="idref" href="memdata.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="memdata.html#ofs"><span class="id" title="variable">ofs</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a name="check_pointer"><span class="id" title="definition">check_pointer</span></a> (<span class="id" title="var">n</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<span class="id" title="var">b</span>: <a class="idref" href="memdata.html#block"><span class="id" title="definition">block</span></a>) (<span class="id" title="var">ofs</span>: <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a>) (<span class="id" title="var">vl</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="keyword">struct</span> <span class="id" title="var">n</span>} : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#n"><span class="id" title="variable">n</span></a>, <a class="idref" href="memdata.html#vl"><span class="id" title="variable">vl</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">m</span>, <a class="idref" href="memdata.html#Pointer"><span class="id" title="constructor">Pointer</span></a> <span class="id" title="var">b&acute;</span> <span class="id" title="var">ofs&acute;</span> <span class="id" title="var">m&acute;</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="var">vl&acute;</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Coqlib.html#peq"><span class="id" title="definition">peq</span></a> <a class="idref" href="memdata.html#b"><span class="id" title="variable">b</span></a> <span class="id" title="var">b&acute;</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#49ac24efa716d8b0ee8943bc1d1769a9"><span class="id" title="notation">&amp;&amp;</span></a> <a class="idref" href="Integers.html#Int.eq_dec"><span class="id" title="lemma">Int.eq_dec</span></a> <a class="idref" href="memdata.html#ofs"><span class="id" title="variable">ofs</span></a> <span class="id" title="var">ofs&acute;</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#49ac24efa716d8b0ee8943bc1d1769a9"><span class="id" title="notation">&amp;&amp;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Arith.EqNat.html#beq_nat"><span class="id" title="definition">beq_nat</span></a> <span class="id" title="var">m</span> <span class="id" title="var">m&acute;</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#49ac24efa716d8b0ee8943bc1d1769a9"><span class="id" title="notation">&amp;&amp;</span></a> <a class="idref" href="memdata.html#check_pointer"><span class="id" title="definition">check_pointer</span></a> <span class="id" title="var">m</span> <a class="idref" href="memdata.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="memdata.html#ofs"><span class="id" title="variable">ofs</span></a> <span class="id" title="var">vl&acute;</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">_</span>, <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="addrval"><span class="id" title="definition">addrval</span></a>:=<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a> <a class="idref" href="memdata.html#block"><span class="id" title="definition">block</span></a> <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="val"><span class="id" title="inductive">val</span></a>: <span class="id" title="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <a name="Vundef"><span class="id" title="constructor">Vundef</span></a>: <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a><br/>
+&nbsp;&nbsp;| <a name="Vnull"><span class="id" title="constructor">Vnull</span></a> : <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a><br/>
+&nbsp;&nbsp;| <a name="Vint32"><span class="id" title="constructor">Vint32</span></a>  : <a class="idref" href="Integers.html#int"><span class="id" title="abbreviation">int</span></a> -&gt; <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a><br/>
+&nbsp;&nbsp;| <a name="Vptr"><span class="id" title="constructor">Vptr</span></a>  : <a class="idref" href="memdata.html#addrval"><span class="id" title="definition">addrval</span></a> -&gt; <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="proj_pointer"><span class="id" title="definition">proj_pointer</span></a> (<span class="id" title="var">vl</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a>) : <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#vl"><span class="id" title="variable">vl</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Pointer"><span class="id" title="constructor">Pointer</span></a> <span class="id" title="var">b</span> <span class="id" title="var">ofs</span> <span class="id" title="var">n</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="var">vl&acute;</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <a class="idref" href="memdata.html#check_pointer"><span class="id" title="definition">check_pointer</span></a> 4%<span class="id" title="var">nat</span> <span class="id" title="var">b</span> <span class="id" title="var">ofs</span> <a class="idref" href="memdata.html#vl"><span class="id" title="variable">vl</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="memdata.html#Vptr"><span class="id" title="constructor">Vptr</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">b</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">ofs</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> <span class="id" title="keyword">else</span> <a class="idref" href="memdata.html#Vundef"><span class="id" title="constructor">Vundef</span></a><br/>
+&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#Vundef"><span class="id" title="constructor">Vundef</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="ident"><span class="id" title="definition">ident</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We support 8 different types, including the type for NULL pointer,
+the void type, the type of ``char'', the type of ``short'',
+the type of ``int'', the type of ``pointers'', the type of ``array''
+and the type of ``struct''. Following Clight, within a struct type,
+the type "Tcom_ptr id"  stands for a pointer type to the nearest
+enclosing struct type named  id.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="type"><span class="id" title="inductive">type</span></a> : <span class="id" title="keyword">Set</span> := <br/>
+&nbsp;| <a name="Tnull"><span class="id" title="constructor">Tnull</span></a><br/>
+&nbsp;| <a name="Tvoid"><span class="id" title="constructor">Tvoid</span></a> <br/>
+&nbsp;| <a name="Tint8"><span class="id" title="constructor">Tint8</span></a> <br/>
+&nbsp;| <a name="Tint16"><span class="id" title="constructor">Tint16</span></a> <br/>
+&nbsp;| <a name="Tint32"><span class="id" title="constructor">Tint32</span></a> <br/>
+&nbsp;| <a name="Tptr"><span class="id" title="constructor">Tptr</span></a> : <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a><br/>
+&nbsp;| <a name="Tcom_ptr"><span class="id" title="constructor">Tcom_ptr</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a><br/>
+&nbsp;| <a name="Tarray"><span class="id" title="constructor">Tarray</span></a> : <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a><br/>
+&nbsp;| <a name="Tstruct"><span class="id" title="constructor">Tstruct</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> -&gt; <a class="idref" href="memdata.html#decllist"><span class="id" title="inductive">decllist</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a><br/>
+<span class="id" title="keyword">with</span> <br/>
+&nbsp;<a name="decllist"><span class="id" title="inductive">decllist</span></a> : <span class="id" title="keyword">Set</span>:=<br/>
+&nbsp;| <a name="dnil"><span class="id" title="constructor">dnil</span></a> : <a class="idref" href="memdata.html#decllist"><span class="id" title="inductive">decllist</span></a><br/>
+&nbsp;| <a name="dcons"><span class="id" title="constructor">dcons</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="memdata.html#decllist"><span class="id" title="inductive">decllist</span></a> -&gt; <a class="idref" href="memdata.html#decllist"><span class="id" title="inductive">decllist</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a name="typelen"><span class="id" title="definition">typelen</span></a> (<span class="id" title="var">t</span> : <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#t"><span class="id" title="variable">t</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tnull"><span class="id" title="constructor">Tnull</span></a> =&gt; 4 %<span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tvoid"><span class="id" title="constructor">Tvoid</span></a> =&gt; 0 % <span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tint8"><span class="id" title="constructor">Tint8</span></a> =&gt; 1 % <span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tint16"><span class="id" title="constructor">Tint16</span></a> =&gt; 2 % <span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tint32"><span class="id" title="constructor">Tint32</span></a> =&gt; 4  % <span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tptr"><span class="id" title="constructor">Tptr</span></a> <span class="id" title="var">_</span> =&gt; 4 % <span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tcom_ptr"><span class="id" title="constructor">Tcom_ptr</span></a>  <span class="id" title="var">_</span> =&gt; 4 % <span class="id" title="var">nat</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tarray"><span class="id" title="constructor">Tarray</span></a> <span class="id" title="var">t&acute;</span> <span class="id" title="var">n</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Peano.html#mult"><span class="id" title="definition">mult</span></a> (<a class="idref" href="memdata.html#typelen"><span class="id" title="definition">typelen</span></a> <span class="id" title="var">t&acute;</span>) <span class="id" title="var">n</span><br/>
+&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tstruct"><span class="id" title="constructor">Tstruct</span></a> <span class="id" title="var">_</span> <span class="id" title="var">dls</span>  =&gt; <a class="idref" href="memdata.html#szstruct"><span class="id" title="definition">szstruct</span></a> <span class="id" title="var">dls</span><br/>
+&nbsp;<span class="id" title="keyword">end</span>  <span class="id" title="keyword">with</span> <a name="szstruct"><span class="id" title="definition">szstruct</span></a> (<span class="id" title="var">dls</span> : <a class="idref" href="memdata.html#decllist"><span class="id" title="inductive">decllist</span></a>) {<span class="id" title="keyword">struct</span> <span class="id" title="var">dls</span>} : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#dls"><span class="id" title="variable">dls</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#dnil"><span class="id" title="constructor">dnil</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#dcons"><span class="id" title="constructor">dcons</span></a> <span class="id" title="var">_</span> <span class="id" title="var">t1</span> <span class="id" title="var">dls&acute;</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Peano.html#plus"><span class="id" title="definition">plus</span></a> (<a class="idref" href="memdata.html#typelen"><span class="id" title="definition">typelen</span></a> <span class="id" title="var">t1</span>) (<a class="idref" href="memdata.html#szstruct"><span class="id" title="definition">szstruct</span></a> <span class="id" title="var">dls&acute;</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="encode_val"><span class="id" title="definition">encode_val</span></a> (<span class="id" title="var">t</span>: <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a>) (<span class="id" title="var">v</span>: <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#v"><span class="id" title="variable">v</span></a>, <a class="idref" href="memdata.html#t"><span class="id" title="variable">t</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Vint32"><span class="id" title="constructor">Vint32</span></a>  <span class="id" title="var">n</span>, <a class="idref" href="memdata.html#Tint8"><span class="id" title="constructor">Tint8</span></a>  =&gt; <a class="idref" href="memdata.html#inj_bytes"><span class="id" title="definition">inj_bytes</span></a> (<a class="idref" href="memdata.html#encode_int"><span class="id" title="definition">encode_int</span></a> 1%<span class="id" title="var">nat</span> (<a class="idref" href="Integers.html#Int.unsigned"><span class="id" title="definition">Int.unsigned</span></a> <span class="id" title="var">n</span>))<br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Vint32"><span class="id" title="constructor">Vint32</span></a>  <span class="id" title="var">n</span>, <a class="idref" href="memdata.html#Tint16"><span class="id" title="constructor">Tint16</span></a> =&gt; <a class="idref" href="memdata.html#inj_bytes"><span class="id" title="definition">inj_bytes</span></a> (<a class="idref" href="memdata.html#encode_int"><span class="id" title="definition">encode_int</span></a> 2%<span class="id" title="var">nat</span> (<a class="idref" href="Integers.html#Int.unsigned"><span class="id" title="definition">Int.unsigned</span></a> <span class="id" title="var">n</span>))<br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Vint32"><span class="id" title="constructor">Vint32</span></a>  <span class="id" title="var">n</span>, <a class="idref" href="memdata.html#Tint32"><span class="id" title="constructor">Tint32</span></a> =&gt; <a class="idref" href="memdata.html#inj_bytes"><span class="id" title="definition">inj_bytes</span></a> (<a class="idref" href="memdata.html#encode_int"><span class="id" title="definition">encode_int</span></a> 4%<span class="id" title="var">nat</span> (<a class="idref" href="Integers.html#Int.unsigned"><span class="id" title="definition">Int.unsigned</span></a> <span class="id" title="var">n</span>))<br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Vptr"><span class="id" title="constructor">Vptr</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">b</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">ofs</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a>, <a class="idref" href="memdata.html#Tptr"><span class="id" title="constructor">Tptr</span></a> <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#inj_pointer"><span class="id" title="definition">inj_pointer</span></a> 4%<span class="id" title="var">nat</span> <span class="id" title="var">b</span> (<span class="id" title="var">ofs</span>)<br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Vptr"><span class="id" title="constructor">Vptr</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">b</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">ofs</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a>, <a class="idref" href="memdata.html#Tcom_ptr"><span class="id" title="constructor">Tcom_ptr</span></a> <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#inj_pointer"><span class="id" title="definition">inj_pointer</span></a> 4%<span class="id" title="var">nat</span> <span class="id" title="var">b</span> (<span class="id" title="var">ofs</span>)<br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Vnull"><span class="id" title="constructor">Vnull</span></a>, <a class="idref" href="memdata.html#Tnull"><span class="id" title="constructor">Tnull</span></a> =&gt; <a class="idref" href="Coqlib.html#list_repeat"><span class="id" title="definition">list_repeat</span></a> 4 <a class="idref" href="memdata.html#MNull"><span class="id" title="constructor">MNull</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Vnull"><span class="id" title="constructor">Vnull</span></a>, <a class="idref" href="memdata.html#Tptr"><span class="id" title="constructor">Tptr</span></a> <span class="id" title="var">_</span> =&gt; <a class="idref" href="Coqlib.html#list_repeat"><span class="id" title="definition">list_repeat</span></a> 4 <a class="idref" href="memdata.html#MNull"><span class="id" title="constructor">MNull</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="memdata.html#Vnull"><span class="id" title="constructor">Vnull</span></a>, <a class="idref" href="memdata.html#Tcom_ptr"><span class="id" title="constructor">Tcom_ptr</span></a> <span class="id" title="var">_</span> =&gt; <a class="idref" href="Coqlib.html#list_repeat"><span class="id" title="definition">list_repeat</span></a> 4 <a class="idref" href="memdata.html#MNull"><span class="id" title="constructor">MNull</span></a><br/>
+&nbsp;&nbsp;| <span class="id" title="var">_</span>, <span class="id" title="var">_</span> =&gt; <a class="idref" href="Coqlib.html#list_repeat"><span class="id" title="definition">list_repeat</span></a> (<a class="idref" href="memdata.html#typelen"><span class="id" title="definition">typelen</span></a> <a class="idref" href="memdata.html#t"><span class="id" title="variable">t</span></a>) <a class="idref" href="memdata.html#Undef"><span class="id" title="constructor">Undef</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="decode_val"><span class="id" title="definition">decode_val</span></a> (<span class="id" title="var">t</span>: <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a>) (<span class="id" title="var">vl</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#memval"><span class="id" title="inductive">memval</span></a>) : <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#proj_bytes"><span class="id" title="definition">proj_bytes</span></a> <a class="idref" href="memdata.html#vl"><span class="id" title="variable">vl</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">bl</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#t"><span class="id" title="variable">t</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tint8"><span class="id" title="constructor">Tint8</span></a>  =&gt; <a class="idref" href="memdata.html#Vint32"><span class="id" title="constructor">Vint32</span></a>(<a class="idref" href="Integers.html#Int.zero_ext"><span class="id" title="definition">Int.zero_ext</span></a> 8 (<a class="idref" href="Integers.html#Int.repr"><span class="id" title="definition">Int.repr</span></a> (<a class="idref" href="memdata.html#decode_int"><span class="id" title="definition">decode_int</span></a> <span class="id" title="var">bl</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tint16"><span class="id" title="constructor">Tint16</span></a> =&gt; <a class="idref" href="memdata.html#Vint32"><span class="id" title="constructor">Vint32</span></a>(<a class="idref" href="Integers.html#Int.zero_ext"><span class="id" title="definition">Int.zero_ext</span></a> 16 (<a class="idref" href="Integers.html#Int.repr"><span class="id" title="definition">Int.repr</span></a> (<a class="idref" href="memdata.html#decode_int"><span class="id" title="definition">decode_int</span></a> <span class="id" title="var">bl</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tint32"><span class="id" title="constructor">Tint32</span></a> =&gt; <a class="idref" href="memdata.html#Vint32"><span class="id" title="constructor">Vint32</span></a>(<a class="idref" href="Integers.html#Int.repr"><span class="id" title="definition">Int.repr</span></a>(<a class="idref" href="memdata.html#decode_int"><span class="id" title="definition">decode_int</span></a> <span class="id" title="var">bl</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#Vundef"><span class="id" title="constructor">Vundef</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#vl"><span class="id" title="variable">vl</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#MNull"><span class="id" title="constructor">MNull</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="memdata.html#MNull"><span class="id" title="constructor">MNull</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><a class="idref" href="memdata.html#MNull"><span class="id" title="constructor">MNull</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="memdata.html#MNull"><span class="id" title="constructor">MNull</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>=&gt; <span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#t"><span class="id" title="variable">t</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tnull"><span class="id" title="constructor">Tnull</span></a> =&gt; <a class="idref" href="memdata.html#Vnull"><span class="id" title="constructor">Vnull</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tptr"><span class="id" title="constructor">Tptr</span></a> <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#Vnull"><span class="id" title="constructor">Vnull</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tcom_ptr"><span class="id" title="constructor">Tcom_ptr</span></a> <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#Vnull"><span class="id" title="constructor">Vnull</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#Vundef"><span class="id" title="constructor">Vundef</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="memdata.html#t"><span class="id" title="variable">t</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tptr"><span class="id" title="constructor">Tptr</span></a> <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#proj_pointer"><span class="id" title="definition">proj_pointer</span></a> <a class="idref" href="memdata.html#vl"><span class="id" title="variable">vl</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="memdata.html#Tcom_ptr"><span class="id" title="constructor">Tcom_ptr</span></a> <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#proj_pointer"><span class="id" title="definition">proj_pointer</span></a> <a class="idref" href="memdata.html#vl"><span class="id" title="variable">vl</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <a class="idref" href="memdata.html#Vundef"><span class="id" title="constructor">Vundef</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="encode_val_length"><span class="id" title="lemma">encode_val_length</span></a>:<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">t</span> <span class="id" title="var">v</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a>(<a class="idref" href="memdata.html#encode_val"><span class="id" title="definition">encode_val</span></a> <a class="idref" href="memdata.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="memdata.html#v"><span class="id" title="variable">v</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="memdata.html#typelen"><span class="id" title="definition">typelen</span></a> <a class="idref" href="memdata.html#t"><span class="id" title="variable">t</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

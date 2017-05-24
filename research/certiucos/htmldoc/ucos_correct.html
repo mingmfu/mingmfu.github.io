@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>ucos_correct</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library ucos_correct</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+  This file contains two final theorems for verifying functional 
+  correctness and PIF of ucos-II. The functional correctness is
+  proved with the refinement program logic that ensures the contextual
+  refinement between the low-level kernel implementations and the
+  high-level specification code. PIF is poved as a safety property 
+  with the high-level specification code running on the high-level 
+  abstract machine. 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="include.html#"><span class="id" title="library">include</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="toprule.html#"><span class="id" title="library">toprule</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSTimeDlyProof.html#"><span class="id" title="library">OSTimeDlyProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSTimeGetProof.html#"><span class="id" title="library">OSTimeGetProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSSemCreateProof.html#"><span class="id" title="library">OSSemCreateProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSSemDeleteProof.html#"><span class="id" title="library">OSSemDeleteProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSSemAcceptProof.html#"><span class="id" title="library">OSSemAcceptProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="MboxAcceptProof.html#"><span class="id" title="library">MboxAcceptProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="MboxCreateProof.html#"><span class="id" title="library">MboxCreateProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="MboxDelProof.html#"><span class="id" title="library">MboxDelProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="MboxPendProof.html#"><span class="id" title="library">MboxPendProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="MboxPostProof.html#"><span class="id" title="library">MboxPostProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSSemPendProof.html#"><span class="id" title="library">OSSemPendProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSSemPostProof.html#"><span class="id" title="library">OSSemPostProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSQAcceptProof.html#"><span class="id" title="library">OSQAcceptProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSQCreateProof.html#"><span class="id" title="library">OSQCreateProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSQDelProof.html#"><span class="id" title="library">OSQDelProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSQPendProof.html#"><span class="id" title="library">OSQPendProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSQPostProof.html#"><span class="id" title="library">OSQPostProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSQGetMsgProof.html#"><span class="id" title="library">OSQGetMsgProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="IntExitProof.html#"><span class="id" title="library">IntExitProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSEventRemoveProof.html#"><span class="id" title="library">OSEventRemoveProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSEventSearchProof.html#"><span class="id" title="library">OSEventSearchProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSEventTaskRdy.html#"><span class="id" title="library">OSEventTaskRdy</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSEventTaskWait.html#"><span class="id" title="library">OSEventTaskWait</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSEventWaitListInitProof.html#"><span class="id" title="library">OSEventWaitListInitProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSSchedProof.html#"><span class="id" title="library">OSSchedProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSTimeTickProof.html#"><span class="id" title="library">OSTimeTickProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="TimeIntProof.html#"><span class="id" title="library">TimeIntProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ToyIntProof.html#"><span class="id" title="library">ToyIntProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexAcceptProof.html#"><span class="id" title="library">OSMutexAcceptProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexCreateProof.html#"><span class="id" title="library">OSMutexCreateProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexDelProof.html#"><span class="id" title="library">OSMutexDelProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPendProof.html#"><span class="id" title="library">OSMutexPendProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostProof.html#"><span class="id" title="library">OSMutexPostProof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ucos_correctaux.html#"><span class="id" title="library">ucos_correctaux</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="PIF_def.html#"><span class="id" title="library">PIF_def</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="PIF_aux.html#"><span class="id" title="library">PIF_aux</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+  Applying the 'TopRule' to verify kernel APIs, internal functions and interrupt handlers.
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="ucos_toprule_sat"><span class="id" title="lemma">ucos_toprule_sat</span></a>: <a class="idref" href="toprule.html#TopRule"><span class="id" title="inductive">TopRule</span></a> <a class="idref" href="os_program.html#low_level_os_code"><span class="id" title="definition">low_level_os_code</span></a> <a class="idref" href="os_spec.html#os_spec"><span class="id" title="definition">os_spec</span></a> <a class="idref" href="ucos_correctaux.html#ucos_init"><span class="id" title="definition">ucos_init</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Theorem 'ucos_correct' is the final theorem for the functional correctness of ucos/II, 
+which ensures the contextual refinement between the low-level OS kernel code and their 
+high-level specification code. 'low_level_os_code' is the low-level os code, 
+'os_spec' is the high-level specifications. 'ucos_init' specifies the initial state. 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="ucos_correct"><span class="id" title="lemma">ucos_correct</span></a>: <a class="idref" href="toptheorem.html#OS_Correctness"><span class="id" title="definition">OS_Correctness</span></a> <a class="idref" href="os_program.html#low_level_os_code"><span class="id" title="definition">low_level_os_code</span></a> <a class="idref" href="os_spec.html#os_spec"><span class="id" title="definition">os_spec</span></a> <a class="idref" href="ucos_correctaux.html#ucos_init"><span class="id" title="definition">ucos_init</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+Theorem 'Unbounded_Priority_Inversion_Free_Proof' is used to verify 
+priority-inversion-freedom (PIF) of mutexes in ucos-II.  
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="Unbounded_Priority_Inversion_Free_Proof"><span class="id" title="lemma">Unbounded_Priority_Inversion_Free_Proof</span></a>:<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">client_code</span> <span class="id" title="var">T</span> <span class="id" title="var">cst</span> <span class="id" title="var">O</span> <span class="id" title="var">T&acute;</span> <span class="id" title="var">cst&acute;</span> <span class="id" title="var">O&acute;</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="etraceref.html#InitTasks"><span class="id" title="definition">InitTasks</span></a> <a class="idref" href="ucos_correct.html#T"><span class="id" title="variable">T</span></a> <a class="idref" href="ucos_correct.html#client_code"><span class="id" title="variable">client_code</span></a> <a class="idref" href="ucos_correct.html#cst"><span class="id" title="variable">cst</span></a> <a class="idref" href="ucos_correct.html#O"><span class="id" title="variable">O</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="PIF_def.html#init_st"><span class="id" title="definition">init_st</span></a> <a class="idref" href="ucos_correct.html#O"><span class="id" title="variable">O</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="PIF_aux.html#good_client_code"><span class="id" title="definition">good_client_code</span></a> <a class="idref" href="ucos_correct.html#client_code"><span class="id" title="variable">client_code</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="PIF_aux.html#no_nest_client"><span class="id" title="definition">no_nest_client</span></a> <a class="idref" href="ucos_correct.html#client_code"><span class="id" title="variable">client_code</span></a> <a class="idref" href="ucos_correct.html#O"><span class="id" title="variable">O</span></a> <a class="idref" href="ucos_correct.html#T"><span class="id" title="variable">T</span></a> <a class="idref" href="ucos_correct.html#cst"><span class="id" title="variable">cst</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="opsem.html#hpstepstar"><span class="id" title="inductive">hpstepstar</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><a class="idref" href="ucos_correct.html#client_code"><span class="id" title="variable">client_code</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <a class="idref" href="PIF_aux.html#os_spec&acute;"><span class="id" title="definition">os_spec&acute;</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> <a class="idref" href="ucos_correct.html#T"><span class="id" title="variable">T</span></a> <a class="idref" href="ucos_correct.html#cst"><span class="id" title="variable">cst</span></a> <a class="idref" href="ucos_correct.html#O"><span class="id" title="variable">O</span></a> <a class="idref" href="ucos_correct.html#T&acute;"><span class="id" title="variable">T&acute;</span></a> <a class="idref" href="ucos_correct.html#cst&acute;"><span class="id" title="variable">cst&acute;</span></a> <a class="idref" href="ucos_correct.html#O&acute;"><span class="id" title="variable">O&acute;</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="PIF_def.html#PREEMP"><span class="id" title="definition">PREEMP</span></a> <a class="idref" href="ucos_correct.html#O&acute;"><span class="id" title="variable">O&acute;</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="PIF_def.html#PIF"><span class="id" title="definition">PIF</span></a> <a class="idref" href="ucos_correct.html#O&acute;"><span class="id" title="variable">O&acute;</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

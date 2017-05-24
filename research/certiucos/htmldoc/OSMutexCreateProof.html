@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>OSMutexCreateProof</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library OSMutexCreateProof</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+OS_EVENT∗ ·OSMutexCreate·(⌞prio @ Int8u⌟)··{
+           ⌞pevent @ OS_EVENT∗⌟;
+
+<div class="paragraph"> </div>
+
+1          If (prio′ ≥ ′OS_LOWEST_PRIO)
+           {                         
+12              RETURN 〈OS_EVENT ∗〉 NULL
+           };ₛ
+13         ENTER_CRITICAL;ₛ
+14         If (OSTCBPrioTbl′<span class="inlinecode"><span class="id" title="var">prio</span>′</span> !=ₑ NULL)
+           {
+15              EXIT_CRITICAL;ₛ
+16              RETURN 〈OS_EVENT ∗〉 NULL               
+           };ₛ                   
+17         pevent′ =ₑ OSEventFreeList′;ₛ
+18         If (OSEventFreeList′ !=ₑ NULL)
+           {
+19              OSEventFreeList′ =ₑ  〈OS_EVENT∗〉 OSEventFreeList′→OSEventListPtr
+           };ₛ
+20         IF (pevent′ !=ₑ NULL)
+           {
+21              OS_EventWaitListInit(­pevent′­);ₛ  
+22              pevent′→OSEventType =ₑ ′OS_EVENT_TYPE_MUTEX;ₛ
+23              pevent′→OSEventCnt  =ₑ ((〈Int16u〉prio′) ≪ ′8) |ₑ ′OS_MUTEX_AVAILABLE;ₛ  
+24              pevent′→OSEventPtr  =ₑ NULL;ₛ
+25              pevent ′ → OSEventListPtr =ₑ OSEventList ′;ₛ
+26              OSTCBPrioTbl′<span class="inlinecode"><span class="id" title="var">prio</span>′</span> =ₑ 〈OS_TCB ∗〉 PlaceHolder;ₛ
+27              OSEventList′ =ₑ pevent′;ₛ
+28              EXIT_CRITICAL;ₛ
+29              RETURN pevent′          
+            }
+            ELSE
+            {
+30              EXIT_CRITICAL;ₛ
+31              RETURN 〈OS_EVENT ∗〉 NULL
+            }
+ }·.
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ucert.html#"><span class="id" title="library">ucert</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="lab.html#"><span class="id" title="library">lab</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mathlib.html#"><span class="id" title="library">mathlib</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutex_common.html#"><span class="id" title="library">OSMutex_common</span></a>.<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">code_scope</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="OSMutexCreateRight"><span class="id" title="lemma">OSMutexCreateRight</span></a>: <br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">vl</span> <span class="id" title="var">p</span> <span class="id" title="var">r</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="OSMutexCreateProof.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="auxdef.html#BuildPreA&acute;"><span class="id" title="definition">BuildPreA&acute;</span></a> <a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMutexCreate"><span class="id" title="definition">OSMutexCreate</span></a> <a class="idref" href="absop.html#mutexcreapi"><span class="id" title="definition">mutexcreapi</span></a> <a class="idref" href="OSMutexCreateProof.html#vl"><span class="id" title="variable">vl</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="OSMutexCreateProof.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="auxdef.html#BuildRetA&acute;"><span class="id" title="definition">BuildRetA&acute;</span></a> <a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMutexCreate"><span class="id" title="definition">OSMutexCreate</span></a> <a class="idref" href="absop.html#mutexcreapi"><span class="id" title="definition">mutexcreapi</span></a>  <a class="idref" href="OSMutexCreateProof.html#vl"><span class="id" title="variable">vl</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="LibTactics.html#645ed6754f9d4452ad12f0d16c808957"><span class="id" title="notation">exists</span></a> <span class="id" title="var">t</span> <span class="id" title="var">d1</span> <span class="id" title="var">d2</span> <span class="id" title="var">s</span><a class="idref" href="LibTactics.html#645ed6754f9d4452ad12f0d16c808957"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMutexCreate"><span class="id" title="definition">OSMutexCreate</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">t</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">d1</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">d2</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">s</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">/\</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{|</span></a> <a class="idref" href="InternalFunSpec.html#OSQ_spec"><span class="id" title="definition">OSQ_spec</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="absop.html#GetHPrio"><span class="id" title="definition">GetHPrio</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="inv_prop.html#I"><span class="id" title="definition">I</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="OSMutexCreateProof.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="assertion.html#Afalse"><span class="id" title="constructor">Afalse</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">|}</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">|-</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{{</span></a> <a class="idref" href="OSMutexCreateProof.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">}}</span></a> <span class="id" title="var">s</span> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{{</span></a> <a class="idref" href="assertion.html#Afalse"><span class="id" title="constructor">Afalse</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">}}</span></a>.<br/>
+&nbsp;<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSQCreatePure.html#"><span class="id" title="library">OSQCreatePure</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

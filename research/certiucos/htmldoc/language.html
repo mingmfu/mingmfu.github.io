@@ -1,0 +1,1020 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>language</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library language</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This file contains the formalization of the low-level language for
+implementing preemptive OS kernels and the high-level specification language
+for specifying OS kernels. The low-level language is a practical subset
+of C plus assembly primitives, while the high-level specification language
+is a simple imperative language parametrized with abstract schedulers and
+kernel operations. The implementation corresponds to Sec.3 of the paper.
+
+<div class="paragraph"> </div>
+
+The low-level language is concurrent, with multiple continuations (i.e., control stacks)
+in the state, each corresponding to a task. All tasks share memory, but each has
+its own local variables and local interrupt states. We also separate the program state
+(including memory and variables) into two disjoint parts, one for the application
+code and the other for the kernel code. The only way for client code to
+access kernel states is to call system APIs, and kernel APIs cannot access
+application states.
+
+<div class="paragraph"> </div>
+
+The high-level specification language provides some abstract statements to specify
+the system APIs and interrupt handlers. It not only allows users to write
+abstract statements to specify the functionality of kernel APIs but also configure
+the abstract scheduler.  Specifying details of the scheduling policies
+(instead of using a more abstract non-deterministic scheduler that may pick any task)
+allows us to specify and verify scheduling properties such as PIF at the high level.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="include.html#"><span class="id" title="library">include</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="memdata.html#"><span class="id" title="library">memdata</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="memory.html#"><span class="id" title="library">memory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="val.html#"><span class="id" title="library">val</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+task idenifier
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="tid"><span class="id" title="definition">tid</span></a> := <a class="idref" href="memdata.html#addrval"><span class="id" title="definition">addrval</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="beq_tid"><span class="id" title="definition">beq_tid</span></a> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <a class="idref" href="language.html#tid"><span class="id" title="definition">tid</span></a>) :  <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="language.html#n"><span class="id" title="variable">n</span></a>, <a class="idref" href="language.html#m"><span class="id" title="variable">m</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|  <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">b</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">i</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">b&acute;</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">i&acute;</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#andb"><span class="id" title="definition">andb</span></a> (<a class="idref" href="memory.html#beq_pos"><span class="id" title="definition">beq_pos</span></a> <span class="id" title="var">b</span> <span class="id" title="var">b&acute;</span>) (<a class="idref" href="Integers.html#Int.eq"><span class="id" title="definition">Int.eq</span></a> <span class="id" title="var">i</span> <span class="id" title="var">i&acute;</span>) <br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="blt_tid"><span class="id" title="definition">blt_tid</span></a> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <a class="idref" href="language.html#tid"><span class="id" title="definition">tid</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="language.html#n"><span class="id" title="variable">n</span></a>, <a class="idref" href="language.html#m"><span class="id" title="variable">m</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|  <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">b</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">i</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">b&acute;</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">i&acute;</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> =&gt; <span class="id" title="keyword">if</span> <a class="idref" href="memory.html#blt_pos"><span class="id" title="definition">blt_pos</span></a> <span class="id" title="var">b</span> <span class="id" title="var">b&acute;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">then</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">else</span> <span class="id" title="keyword">if</span> <a class="idref" href="memory.html#beq_pos"><span class="id" title="definition">beq_pos</span></a> <span class="id" title="var">b</span> <span class="id" title="var">b&acute;</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">then</span> <a class="idref" href="Integers.html#Int.lt"><span class="id" title="definition">Int.lt</span></a> <span class="id" title="var">i</span> <span class="id" title="var">i&acute;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">else</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the task identifier module for the range of maps
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="tidspec"><span class="id" title="module">tidspec</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="tidspec.A"><span class="id" title="definition">A</span></a> := <a class="idref" href="language.html#tidspec.tid"><span class="id" title="definition">tid</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="tidspec.B"><span class="id" title="definition">B</span></a> := <a class="idref" href="language.html#tidspec.tid"><span class="id" title="definition">tid</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="tidspec.beq"><span class="id" title="definition">beq</span></a> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a> -&gt; <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <a class="idref" href="language.html#tidspec.beq_tid"><span class="id" title="definition">beq_tid</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="tidspec.blt"><span class="id" title="definition">blt</span></a> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a> -&gt; <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> := <a class="idref" href="language.html#tidspec.blt_tid"><span class="id" title="definition">blt_tid</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tidspec.beq_true_eq"><span class="id" title="lemma">beq_true_eq</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#tidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> -&gt; <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tidspec.beq_false_neq"><span class="id" title="lemma">beq_false_neq</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#tidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> -&gt; <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">&lt;&gt;</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tidspec.eq_beq_true"><span class="id" title="lemma">eq_beq_true</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> -&gt; <a class="idref" href="language.html#tidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tidspec.neq_beq_false"><span class="id" title="lemma">neq_beq_false</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">&lt;&gt;</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> -&gt; <a class="idref" href="language.html#tidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tidspec.blt_trans"><span class="id" title="lemma">blt_trans</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> <span class="id" title="var">a&acute;&acute;</span> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#tidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> -&gt; <a class="idref" href="language.html#tidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="language.html#a&acute;&acute;"><span class="id" title="variable">a&acute;&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> -&gt; <a class="idref" href="language.html#tidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;&acute;"><span class="id" title="variable">a&acute;&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tidspec.blt_irrefl"><span class="id" title="lemma">blt_irrefl</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#tidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tidspec.blt_asym"><span class="id" title="lemma">blt_asym</span></a> :  <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a>, <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#tidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> -&gt; <a class="idref" href="language.html#tidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tidspec.blt_beq_dec"><span class="id" title="lemma">blt_beq_dec</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="language.html#tidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">{</span></a><a class="idref" href="language.html#tidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">}</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">{</span></a><a class="idref" href="language.html#tidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">}</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">{</span></a><a class="idref" href="language.html#tidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">}</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#tidspec"><span class="id" title="module">tidspec</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+function names 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="fid"><span class="id" title="definition">fid</span></a> :=  <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+INUM represents the total number of interrupt handlers, which is configurable 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="INUM"><span class="id" title="definition">INUM</span></a> := 2%<span class="id" title="var">nat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+interrupt identifiers 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span>  <a name="hid"><span class="id" title="definition">hid</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+C expressions
+
+<div class="paragraph"> </div>
+
+We use 'enull' to represent the special expression which is used for initializing
+a pointer with 'vnull'. Both a variable x and a integer n can be an expression.
+The expression 'ederef e' is used to dereference a memory location obtained from 'e',
+while 'eaddrof e' calculates and returns the memory address of 'e'. The expression
+'efield e id' is used for accessing a field of a “struct” type. 'earrayelem e1 e2'
+returns the value of an element of an array. 'ecast e t' cast the type of 'e' into 't'.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="expr"><span class="id" title="inductive">expr</span></a>:=<br/>
+| <a name="enull"><span class="id" title="constructor">enull</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> <br/>
+| <a name="evar"><span class="id" title="constructor">evar</span></a> : <a class="idref" href="memory.html#var"><span class="id" title="definition">var</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> <br/>
+| <a name="econst32"><span class="id" title="constructor">econst32</span></a> : <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> <br/>
+| <a name="eunop"><span class="id" title="constructor">eunop</span></a> : <a class="idref" href="val.html#uop"><span class="id" title="inductive">uop</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> <br/>
+| <a name="ebinop"><span class="id" title="constructor">ebinop</span></a> : <a class="idref" href="val.html#bop"><span class="id" title="inductive">bop</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> <br/>
+| <a name="ederef"><span class="id" title="constructor">ederef</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a>   <br/>
+| <a name="eaddrof"><span class="id" title="constructor">eaddrof</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a>  <br/>
+| <a name="efield"><span class="id" title="constructor">efield</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> <br/>
+| <a name="ecast"><span class="id" title="constructor">ecast</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> <br/>
+| <a name="earrayelem"><span class="id" title="constructor">earrayelem</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a>. 
+<br/>
+</div>
+
+<div class="doc">
+expression list
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="exprlist"><span class="id" title="definition">exprlist</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+value list
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="vallist"><span class="id" title="definition">vallist</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+address list
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="addrlist"><span class="id" title="definition">addrlist</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#addr"><span class="id" title="definition">addr</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+free list
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="freelist"><span class="id" title="definition">freelist</span></a> : <span class="id" title="keyword">Set</span>:= <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a> <a class="idref" href="memdata.html#block"><span class="id" title="definition">block</span></a> <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+type list
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="typelist"><span class="id" title="definition">typelist</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+low-level primitives
+
+<div class="paragraph"> </div>
+
+The built-in primitive statements is defined as below, 'exint' represents the assembly code
+which is used to return from interrupt handlers. 'eoi n' represents the assembly
+statement that clears a bit of Interrupt Service Register(isr). 'cli' and 'sti'
+are used for enable and disable the interrupt handlers respectively. 'encrit' and
+'excrit' are used for enter and exit critical region respectively. Their semantics
+support nested critical region in μC/OS-II, and they are implemented with the assembly
+instructions like pushf, cli and popf. 'switch x' is used to do context switch, and the
+variable 'x' represents the target task scheduled to. To support reasoning about nested
+and multi-level interrupt handlers, we use the primitive 'checkis' to obtain the
+depth of the nested interrupt handlers. In μC/OS-II, there is a global variable
+“intnesting” to record the depth of the nested interrupt handlers, and context
+switch could only be done when the depth is 1 (intnesting is 1). To reason about
+nested interrupt handlers, instead of specifying this global variable, we introduce
+an abstract stack to record the trace of the interrupt handlers, and the primitive
+'checkis' is used to read the depth of the stack.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="prim"><span class="id" title="inductive">prim</span></a> :=<br/>
+| <a name="exint"><span class="id" title="constructor">exint</span></a> : <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a>  <br/>
+| <a name="switch"><span class="id" title="constructor">switch</span></a> : <a class="idref" href="memory.html#var"><span class="id" title="definition">var</span></a> -&gt; <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a><br/>
+| <a name="eoi"><span class="id" title="constructor">eoi</span></a> : <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a> -&gt; <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a><br/>
+| <a name="excrit"><span class="id" title="constructor">excrit</span></a> : <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a><br/>
+| <a name="encrit"><span class="id" title="constructor">encrit</span></a> : <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a><br/>
+| <a name="cli"><span class="id" title="constructor">cli</span></a> : <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a><br/>
+| <a name="sti"><span class="id" title="constructor">sti</span></a> : <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a><br/>
+| <a name="checkis"><span class="id" title="constructor">checkis</span></a> : <a class="idref" href="memory.html#var"><span class="id" title="definition">var</span></a> -&gt; <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a> .<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+task priority
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="priority"><span class="id" title="definition">priority</span></a> := <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+identifier of event control block
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="ecbid"><span class="id" title="definition">ecbid</span></a> := <a class="idref" href="memdata.html#addrval"><span class="id" title="definition">addrval</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+message
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="msg"><span class="id" title="definition">msg</span></a> := <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the length of messages
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="maxlen"><span class="id" title="definition">maxlen</span></a> := <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+os time
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span>  <a name="ostime"><span class="id" title="definition">ostime</span></a> := <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+waiting list
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="waitset"><span class="id" title="definition">waitset</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="language.html#tid"><span class="id" title="definition">tid</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+states of tasks
+</div>
+<div class="code">
+<span class="id" title="keyword">Inductive</span> <a name="tcbstats"><span class="id" title="inductive">tcbstats</span></a>:=<br/>
+| <a name="os_stat_sem"><span class="id" title="constructor">os_stat_sem</span></a>: <a class="idref" href="language.html#ecbid"><span class="id" title="definition">ecbid</span></a> -&gt; <a class="idref" href="language.html#tcbstats"><span class="id" title="inductive">tcbstats</span></a><br/>
+| <a name="os_stat_q"><span class="id" title="constructor">os_stat_q</span></a>: <a class="idref" href="language.html#ecbid"><span class="id" title="definition">ecbid</span></a> -&gt; <a class="idref" href="language.html#tcbstats"><span class="id" title="inductive">tcbstats</span></a><br/>
+| <a name="os_stat_time"><span class="id" title="constructor">os_stat_time</span></a>:  <a class="idref" href="language.html#tcbstats"><span class="id" title="inductive">tcbstats</span></a><br/>
+| <a name="os_stat_mbox"><span class="id" title="constructor">os_stat_mbox</span></a>: <a class="idref" href="language.html#ecbid"><span class="id" title="definition">ecbid</span></a> -&gt; <a class="idref" href="language.html#tcbstats"><span class="id" title="inductive">tcbstats</span></a><br/>
+| <a name="os_stat_mutexsem"><span class="id" title="constructor">os_stat_mutexsem</span></a>: <a class="idref" href="language.html#ecbid"><span class="id" title="definition">ecbid</span></a> -&gt; <a class="idref" href="language.html#tcbstats"><span class="id" title="inductive">tcbstats</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="taskstatus"><span class="id" title="inductive">taskstatus</span></a> :=<br/>
+| <a name="rdy"><span class="id" title="constructor">rdy</span></a>: <a class="idref" href="language.html#taskstatus"><span class="id" title="inductive">taskstatus</span></a><br/>
+| <a name="wait"><span class="id" title="constructor">wait</span></a> : <a class="idref" href="language.html#tcbstats"><span class="id" title="inductive">tcbstats</span></a> -&gt; <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a> -&gt; <a class="idref" href="language.html#taskstatus"><span class="id" title="inductive">taskstatus</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="abstcb"><span class="id" title="module">abstcb</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="abstcb.B"><span class="id" title="definition">B</span></a> : <span class="id" title="keyword">Set</span> := ( <a class="idref" href="language.html#abstcb.priority"><span class="id" title="definition">priority</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#abstcb.taskstatus"><span class="id" title="inductive">taskstatus</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#abstcb.msg"><span class="id" title="definition">msg</span></a>)%<span class="id" title="var">type</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#abstcb"><span class="id" title="module">abstcb</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="TcbMod"><span class="id" title="module">TcbMod</span></a> := <a class="idref" href="MapLib.html#MapFun"><span class="id" title="module">MapLib.MapFun</span></a> <a class="idref" href="language.html#tidspec"><span class="id" title="module">tidspec</span></a> <a class="idref" href="language.html#abstcb"><span class="id" title="module">abstcb</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="abssem"><span class="id" title="module">abssem</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="abssem.B"><span class="id" title="definition">B</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a> <a class="idref" href="language.html#abssem.waitset"><span class="id" title="definition">waitset</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#abssem"><span class="id" title="module">abssem</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="SemMod"><span class="id" title="module">SemMod</span></a> := <a class="idref" href="MapLib.html#MapFun"><span class="id" title="module">MapLib.MapFun</span></a> <a class="idref" href="language.html#tidspec"><span class="id" title="module">tidspec</span></a> <a class="idref" href="language.html#abssem"><span class="id" title="module">abssem</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="absmsgq"><span class="id" title="module">absmsgq</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="absmsgq.B"><span class="id" title="definition">B</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a>  (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="language.html#absmsgq.msg"><span class="id" title="definition">msg</span></a>) <a class="idref" href="language.html#absmsgq.maxlen"><span class="id" title="definition">maxlen</span></a>) <a class="idref" href="language.html#absmsgq.waitset"><span class="id" title="definition">waitset</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#absmsgq"><span class="id" title="module">absmsgq</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="MsgqMod"><span class="id" title="module">MsgqMod</span></a> := <a class="idref" href="MapLib.html#MapFun"><span class="id" title="module">MapLib.MapFun</span></a> <a class="idref" href="language.html#tidspec"><span class="id" title="module">tidspec</span></a> <a class="idref" href="language.html#absmsgq"><span class="id" title="module">absmsgq</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="owner"><span class="id" title="definition">owner</span></a>:= <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> (<a class="idref" href="language.html#tid"><span class="id" title="definition">tid</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="edata"><span class="id" title="inductive">edata</span></a>:=<br/>
+| <a name="abssem"><span class="id" title="constructor">abssem</span></a>: <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a> -&gt; <a class="idref" href="language.html#edata"><span class="id" title="inductive">edata</span></a><br/>
+| <a name="absmsgq"><span class="id" title="constructor">absmsgq</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="language.html#msg"><span class="id" title="definition">msg</span></a> -&gt; <a class="idref" href="language.html#maxlen"><span class="id" title="definition">maxlen</span></a> -&gt; <a class="idref" href="language.html#edata"><span class="id" title="inductive">edata</span></a><br/>
+| <a name="absmbox"><span class="id" title="constructor">absmbox</span></a>: <a class="idref" href="language.html#msg"><span class="id" title="definition">msg</span></a> -&gt; <a class="idref" href="language.html#edata"><span class="id" title="inductive">edata</span></a><br/>
+| <a name="absmutexsem"><span class="id" title="constructor">absmutexsem</span></a>: <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a> -&gt; <a class="idref" href="language.html#owner"><span class="id" title="definition">owner</span></a> -&gt; <a class="idref" href="language.html#edata"><span class="id" title="inductive">edata</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="absecb"><span class="id" title="module">absecb</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="absecb.B"><span class="id" title="definition">B</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a> <a class="idref" href="language.html#absecb.edata"><span class="id" title="inductive">edata</span></a> <a class="idref" href="language.html#absecb.waitset"><span class="id" title="definition">waitset</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#absecb"><span class="id" title="module">absecb</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="EcbMod"><span class="id" title="module">EcbMod</span></a> := <a class="idref" href="MapLib.html#MapFun"><span class="id" title="module">MapLib.MapFun</span></a> <a class="idref" href="language.html#tidspec"><span class="id" title="module">tidspec</span></a> <a class="idref" href="language.html#absecb"><span class="id" title="module">absecb</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="absdataid"><span class="id" title="inductive">absdataid</span></a>:=<br/>
+| <a name="abstcblsid"><span class="id" title="constructor">abstcblsid</span></a> : <a class="idref" href="language.html#absdataid"><span class="id" title="inductive">absdataid</span></a><br/>
+| <a name="absecblsid"><span class="id" title="constructor">absecblsid</span></a>: <a class="idref" href="language.html#absdataid"><span class="id" title="inductive">absdataid</span></a><br/>
+| <a name="ostmid"><span class="id" title="constructor">ostmid</span></a> : <a class="idref" href="language.html#absdataid"><span class="id" title="inductive">absdataid</span></a><br/>
+| <a name="curtid"><span class="id" title="constructor">curtid</span></a>:<a class="idref" href="language.html#absdataid"><span class="id" title="inductive">absdataid</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="absdataid_eq"><span class="id" title="definition">absdataid_eq</span></a> (<span class="id" title="var">id1</span> <span class="id" title="var">id2</span>:<a class="idref" href="language.html#absdataid"><span class="id" title="inductive">absdataid</span></a>):=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="language.html#id1"><span class="id" title="variable">id1</span></a>, <a class="idref" href="language.html#id2"><span class="id" title="variable">id2</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#abstcblsid"><span class="id" title="constructor">abstcblsid</span></a>, <a class="idref" href="language.html#abstcblsid"><span class="id" title="constructor">abstcblsid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#absecblsid"><span class="id" title="constructor">absecblsid</span></a>,<a class="idref" href="language.html#absecblsid"><span class="id" title="constructor">absecblsid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#ostmid"><span class="id" title="constructor">ostmid</span></a>, <a class="idref" href="language.html#ostmid"><span class="id" title="constructor">ostmid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#curtid"><span class="id" title="constructor">curtid</span></a>,<a class="idref" href="language.html#curtid"><span class="id" title="constructor">curtid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span>,<span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="absdataid_lt"><span class="id" title="definition">absdataid_lt</span></a> (<span class="id" title="var">id1</span> <span class="id" title="var">id2</span>:<a class="idref" href="language.html#absdataid"><span class="id" title="inductive">absdataid</span></a>):=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="language.html#id1"><span class="id" title="variable">id1</span></a>, <a class="idref" href="language.html#id2"><span class="id" title="variable">id2</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#abstcblsid"><span class="id" title="constructor">abstcblsid</span></a>, <a class="idref" href="language.html#abstcblsid"><span class="id" title="constructor">abstcblsid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#abstcblsid"><span class="id" title="constructor">abstcblsid</span></a>, <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#absecblsid"><span class="id" title="constructor">absecblsid</span></a>, <a class="idref" href="language.html#abstcblsid"><span class="id" title="constructor">abstcblsid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#absecblsid"><span class="id" title="constructor">absecblsid</span></a>, <a class="idref" href="language.html#absecblsid"><span class="id" title="constructor">absecblsid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#absecblsid"><span class="id" title="constructor">absecblsid</span></a>, <span class="id" title="var">_</span> =&gt;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#ostmid"><span class="id" title="constructor">ostmid</span></a>, <a class="idref" href="language.html#abstcblsid"><span class="id" title="constructor">abstcblsid</span></a> =&gt;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#ostmid"><span class="id" title="constructor">ostmid</span></a>, <a class="idref" href="language.html#absecblsid"><span class="id" title="constructor">absecblsid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#ostmid"><span class="id" title="constructor">ostmid</span></a>, <a class="idref" href="language.html#ostmid"><span class="id" title="constructor">ostmid</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#ostmid"><span class="id" title="constructor">ostmid</span></a>, <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#curtid"><span class="id" title="constructor">curtid</span></a>, <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> <br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="absdataidspec"><span class="id" title="module">absdataidspec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="absdataidspec.A"><span class="id" title="definition">A</span></a> := <a class="idref" href="language.html#absdataidspec.absdataid"><span class="id" title="inductive">absdataid</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="absdataidspec.beq"><span class="id" title="definition">beq</span></a> := <a class="idref" href="language.html#absdataidspec.absdataid_eq"><span class="id" title="definition">absdataid_eq</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="absdataidspec.blt"><span class="id" title="definition">blt</span></a> := <a class="idref" href="language.html#absdataidspec.absdataid_lt"><span class="id" title="definition">absdataid_lt</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="absdataidspec.beq_true_eq"><span class="id" title="lemma">beq_true_eq</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> : <a class="idref" href="language.html#absdataidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#absdataidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> -&gt; <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="absdataidspec.beq_false_neq"><span class="id" title="lemma">beq_false_neq</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> : <a class="idref" href="language.html#absdataidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#absdataidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> -&gt; <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">&lt;&gt;</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a>.<br/>
+ 
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="absdataidspec.eq_beq_true"><span class="id" title="lemma">eq_beq_true</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> : <a class="idref" href="language.html#absdataidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> -&gt; <a class="idref" href="language.html#absdataidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="absdataidspec.neq_beq_false"><span class="id" title="lemma">neq_beq_false</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> : <a class="idref" href="language.html#absdataidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">&lt;&gt;</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> -&gt; <a class="idref" href="language.html#absdataidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="absdataidspec.blt_trans"><span class="id" title="lemma">blt_trans</span></a> : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">a&acute;</span> <span class="id" title="var">a&acute;&acute;</span> : <a class="idref" href="language.html#absdataidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#absdataidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> -&gt; <a class="idref" href="language.html#absdataidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a&acute;"><span class="id" title="variable">a&acute;</span></a> <a class="idref" href="language.html#a&acute;&acute;"><span class="id" title="variable">a&acute;&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> -&gt; <a class="idref" href="language.html#absdataidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a&acute;&acute;"><span class="id" title="variable">a&acute;&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="absdataidspec.blt_irrefl"><span class="id" title="lemma">blt_irrefl</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> : <a class="idref" href="language.html#absdataidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#absdataidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+ 
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="absdataidspec.blt_asym"><span class="id" title="lemma">blt_asym</span></a> : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="language.html#absdataidspec.A"><span class="id" title="definition">A</span></a>, <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="language.html#absdataidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> -&gt; <a class="idref" href="language.html#absdataidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+ 
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="absdataidspec.blt_beq_dec"><span class="id" title="lemma">blt_beq_dec</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="language.html#absdataidspec.A"><span class="id" title="definition">A</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">{</span></a><a class="idref" href="language.html#absdataidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">}</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">{</span></a><a class="idref" href="language.html#absdataidspec.beq"><span class="id" title="definition">beq</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">}</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">{</span></a><a class="idref" href="language.html#absdataidspec.blt"><span class="id" title="definition">blt</span></a> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="language.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">}</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#absdataidspec"><span class="id" title="module">absdataidspec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="absdata"><span class="id" title="inductive">absdata</span></a>:= <br/>
+| <a name="abstcblist"><span class="id" title="constructor">abstcblist</span></a>: <a class="idref" href="language.html#TcbMod.map"><span class="id" title="definition">TcbMod.map</span></a> -&gt; <a class="idref" href="language.html#absdata"><span class="id" title="inductive">absdata</span></a><br/>
+| <a name="absecblist"><span class="id" title="constructor">absecblist</span></a> : <a class="idref" href="language.html#EcbMod.map"><span class="id" title="definition">EcbMod.map</span></a> -&gt; <a class="idref" href="language.html#absdata"><span class="id" title="inductive">absdata</span></a><br/>
+| <a name="ostm"><span class="id" title="constructor">ostm</span></a>: <a class="idref" href="language.html#ostime"><span class="id" title="definition">ostime</span></a> -&gt; <a class="idref" href="language.html#absdata"><span class="id" title="inductive">absdata</span></a><br/>
+| <a name="oscurt"><span class="id" title="constructor">oscurt</span></a>: <a class="idref" href="memdata.html#addrval"><span class="id" title="definition">addrval</span></a> -&gt; <a class="idref" href="language.html#absdata"><span class="id" title="inductive">absdata</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="absdatastru"><span class="id" title="module">absdatastru</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="absdatastru.B"><span class="id" title="definition">B</span></a> := <a class="idref" href="language.html#absdatastru.absdata"><span class="id" title="inductive">absdata</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#absdatastru"><span class="id" title="module">absdatastru</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="OSAbstMod"><span class="id" title="module">OSAbstMod</span></a> := <a class="idref" href="MapLib.html#MapFun"><span class="id" title="module">MapLib.MapFun</span></a> <a class="idref" href="language.html#absdataidspec"><span class="id" title="module">absdataidspec</span></a> <a class="idref" href="language.html#absdatastru"><span class="id" title="module">absdatastru</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="osabst"><span class="id" title="definition">osabst</span></a>:= <a class="idref" href="language.html#OSAbstMod.map"><span class="id" title="definition">OSAbstMod.map</span></a>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+abstract step 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="osabstep"><span class="id" title="definition">osabstep</span></a> := <a class="idref" href="language.html#vallist"><span class="id" title="definition">vallist</span></a> -&gt; <a class="idref" href="language.html#osabst"><span class="id" title="definition">osabst</span></a> -&gt; (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#osabst"><span class="id" title="definition">osabst</span></a>) -&gt; <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+abstract expression used in spec_assume
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="absexpr"><span class="id" title="definition">absexpr</span></a> := <a class="idref" href="language.html#osabst"><span class="id" title="definition">osabst</span></a> -&gt; <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the high-level specification language
+
+<div class="paragraph"> </div>
+
+'spec_prim vl osabstep' is a relation that takes vl as arguments and maps an abstract
+state to another. Users can instantiate it to specify any atomic transitions over abstract
+states. 'spec_assume absexpr' asserts that the predicate 'absexpr' holds over the current
+abstract state, 'absexpr' is a prop of abstract state. 'spec_end opv' represents the end of
+abstract APIs with optional return values or interrupt handlers. 'spec_seq s1 s2' and
+'spec_choice s1 s2' are statements for sequential composition and non-deterministic
+choices respectively.     
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="spec_code"><span class="id" title="inductive">spec_code</span></a>:=<br/>
+| <a name="spec_prim"><span class="id" title="constructor">spec_prim</span></a> :  <a class="idref" href="language.html#vallist"><span class="id" title="definition">vallist</span></a>-&gt; <a class="idref" href="language.html#osabstep"><span class="id" title="definition">osabstep</span></a> -&gt; <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a><br/>
+| <a name="sched"><span class="id" title="constructor">sched</span></a> : <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a><br/>
+| <a name="spec_done"><span class="id" title="constructor">spec_done</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> -&gt; <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a><br/>
+| <a name="spec_seq"><span class="id" title="constructor">spec_seq</span></a> : <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a> -&gt; <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a> -&gt; <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a><br/>
+| <a name="spec_choice"><span class="id" title="constructor">spec_choice</span></a> : <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a> -&gt; <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a> -&gt; <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a><br/>
+| <a name="spec_assume"><span class="id" title="constructor">spec_assume</span></a> : <a class="idref" href="language.html#absexpr"><span class="id" title="definition">absexpr</span></a> -&gt; <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="e9cfbd708ca14a76ffc38fb04cd57093"><span class="id" title="notation">&quot;</span></a> x &acute;(|&acute; vl &acute;|)&acute; " := (<a class="idref" href="language.html#spec_prim"><span class="id" title="constructor">spec_prim</span></a> <span class="id" title="var">vl</span> <span class="id" title="var">x</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 40).<br/>
+<span class="id" title="keyword">Notation</span>  <a name="02185c92e99639fbb8dedc7bc795ac6a"><span class="id" title="notation">&quot;</span></a> &acute;END&acute; v " := (<a class="idref" href="language.html#spec_done"><span class="id" title="constructor">spec_done</span></a> <span class="id" title="var">v</span>)(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 40).<br/>
+<span class="id" title="keyword">Notation</span>  <a name="c867beb4aa2ff73336c95a0d45cad704"><span class="id" title="notation">&quot;</span></a> x &acute;;;&acute; y " := (<a class="idref" href="language.html#spec_seq"><span class="id" title="constructor">spec_seq</span></a> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>, <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 44).<br/>
+<span class="id" title="keyword">Notation</span>  <a name="82abd07f4d90c6dbff6aa16a5546de0f"><span class="id" title="notation">&quot;</span></a> x &acute;??&acute; y " := (<a class="idref" href="language.html#spec_choice"><span class="id" title="constructor">spec_choice</span></a> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>, <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 45).<br/>
+<span class="id" title="keyword">Notation</span>  <a name="18c7545a363872c64cc3be04be0b4b1e"><span class="id" title="notation">&quot;</span></a> &acute;ASSUME&acute; b " := (<a class="idref" href="language.html#spec_assume"><span class="id" title="constructor">spec_assume</span></a> <span class="id" title="var">b</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 40).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+C statements
+
+<div class="paragraph"> </div>
+
+'sassign e1 e2' is used to assign the right value of e2
+to the memory address obtained from e1 . 'scall f el' is a function call with arguments
+evaluated from expression list 'el'. The similar function call statement 'scalle e f el'
+assigns the return value to the memory address obtained from 'e'. The print statement
+'sprint e' allows us to observe the execution results of the low-level programs. The return
+statements 'sret' and 'sret e' are used in a function body which return with a value or not.
+The other structural statements have standard meanings, we omit their explanation here.
+For the dynamical statements, 'sskip opv' is used to indicate the end of executing a statement,
+and the optional value v records the value generated by the statement if it has.
+The 'sfexec f vl tl' statement is an intermediate statement for running the function body.
+When a function call statement is executed, it first calculates all the expressions to get
+the value list of the arguments, then is executed to 'sfexec' before the execution of the
+function body. 'sfree fl opv' is used to free the memory blocks of local variables
+and formal parameters after finishing the execution of the statements of function
+bodies, while 'salloc vl dl' allocates memory blocks for local variables and formal
+parameters before entering the function body. Note that all the dynamical state-
+ments never appear in the programs written by users. They are only used for
+giving the fine-grained small-step operational semantics.
+
+<div class="paragraph"> </div>
+
+The current implementation mixes the primitives, the standard
+C statements, the high-level api statements and the dynamical statements together. We need to introduce
+additional constraints to specify the OS functions bodies which do not contain
+dynamical statements. Also the client functions cannot have both built-in prim-
+itives or dynamical statements.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="stmts"><span class="id" title="inductive">stmts</span></a> :=<br/>
+| <a name="sskip"><span class="id" title="constructor">sskip</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="sassign"><span class="id" title="constructor">sassign</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> <br/>
+| <a name="sif"><span class="id" title="constructor">sif</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> <br/>
+| <a name="sifthen"><span class="id" title="constructor">sifthen</span></a>:<a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a>-&gt;<a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a>-&gt;<a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="swhile"><span class="id" title="constructor">swhile</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="sret"><span class="id" title="constructor">sret</span></a> : <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="srete"><span class="id" title="constructor">srete</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="scall"><span class="id" title="constructor">scall</span></a> : <a class="idref" href="language.html#fid"><span class="id" title="definition">fid</span></a> -&gt; <a class="idref" href="language.html#exprlist"><span class="id" title="definition">exprlist</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="scalle"><span class="id" title="constructor">scalle</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#fid"><span class="id" title="definition">fid</span></a> -&gt; <a class="idref" href="language.html#exprlist"><span class="id" title="definition">exprlist</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="sseq"><span class="id" title="constructor">sseq</span></a> : <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> <br/>
+| <a name="sprint"><span class="id" title="constructor">sprint</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="sfexec"><span class="id" title="constructor">sfexec</span></a> : <a class="idref" href="language.html#fid"><span class="id" title="definition">fid</span></a> -&gt; <a class="idref" href="language.html#vallist"><span class="id" title="definition">vallist</span></a> -&gt; <a class="idref" href="language.html#typelist"><span class="id" title="definition">typelist</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="sfree"><span class="id" title="constructor">sfree</span></a> : <a class="idref" href="language.html#freelist"><span class="id" title="definition">freelist</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> -&gt;  <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="salloc"><span class="id" title="constructor">salloc</span></a> : <a class="idref" href="language.html#vallist"><span class="id" title="definition">vallist</span></a> -&gt; <a class="idref" href="memdata.html#decllist"><span class="id" title="inductive">decllist</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="sprim"><span class="id" title="constructor">sprim</span></a> : <a class="idref" href="language.html#prim"><span class="id" title="inductive">prim</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a><br/>
+| <a name="hapi_code"><span class="id" title="constructor">hapi_code</span></a>:<a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> .<br/>
+
+<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">type_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+function definitions 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="function"><span class="id" title="definition">function</span></a>  :=  (<a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a>  <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a>  <a class="idref" href="memdata.html#decllist"><span class="id" title="inductive">decllist</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="memdata.html#decllist"><span class="id" title="inductive">decllist</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a>  <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the set of functions
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="progunit"><span class="id" title="definition">progunit</span></a>  := <a class="idref" href="language.html#fid"><span class="id" title="definition">fid</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="language.html#function"><span class="id" title="definition">function</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the set of interrupt handlers 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="intunit"><span class="id" title="definition">intunit</span></a>  := <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the low-level kernel code
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="oscode"><span class="id" title="definition">oscode</span></a> := (<a class="idref" href="language.html#progunit"><span class="id" title="definition">progunit</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#progunit"><span class="id" title="definition">progunit</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#intunit"><span class="id" title="definition">intunit</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+low-level program
+
+<div class="paragraph"> </div>
+
+The whole low-level program 'lprog' (progunit * oscode) consists of client
+function definitions 'progunit' and the OS code 'oscode' (progunit * progunit * intunit),
+where the first 'progunit' represents the definitions of API functions,
+the second 'progunit' means the definitions of the internal functions and
+'intunit' contains all the interrupt handlers.
+APIs and internal functions map function identifiers to the definitions of functions,
+while the interrupt handlers maps the handler identifiers to statements.
+Function definitions 'function' consist of the type of the return value,
+the declaration of parameters, the declaration of local variables and the
+statement of the function body. For convinience, we define client statements
+and kernel statements with the same syntax, A statement can be either
+built-in primitive statements (sprim prim), high-level spec-code
+(hapi_code spec_code), the standard C statements or dynamical statements
+which are only used for defining the operational semantics.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="lprog"><span class="id" title="definition">lprog</span></a>  := (<a class="idref" href="language.html#progunit"><span class="id" title="definition">progunit</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#oscode"><span class="id" title="definition">oscode</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the current evaluation
+</div>
+<div class="code">
+<span class="id" title="keyword">Inductive</span> <a name="cureval"><span class="id" title="inductive">cureval</span></a>:=<br/>
+|<a name="cure"><span class="id" title="constructor">cure</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#cureval"><span class="id" title="inductive">cureval</span></a><br/>
+|<a name="curs"><span class="id" title="constructor">curs</span></a> : <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#cureval"><span class="id" title="inductive">cureval</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="a0c711115537068b54b88d30c8f28d4f"><span class="id" title="notation">&quot;</span></a>&acute;SKIP&acute;  " := (<a class="idref" href="language.html#curs"><span class="id" title="constructor">curs</span></a> (<a class="idref" href="language.html#sskip"><span class="id" title="constructor">sskip</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a>))  (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="f3e214866e2119d9deedec43b0cb7c8d"><span class="id" title="notation">&quot;</span></a>&acute;[&acute; v &acute;]&acute;" := (<a class="idref" href="language.html#curs"><span class="id" title="constructor">curs</span></a> (<a class="idref" href="language.html#sskip"><span class="id" title="constructor">sskip</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">v</span>))) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of continuation, which is a pair of expression continuation and statement continuation
+</div>
+<div class="code">
+<span class="id" title="keyword">Inductive</span> <a name="exprcont"><span class="id" title="inductive">exprcont</span></a>:=<br/>
+| <a name="kenil"><span class="id" title="constructor">kenil</span></a> : <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a><br/>
+| <a name="keop1"><span class="id" title="constructor">keop1</span></a> : <a class="idref" href="val.html#uop"><span class="id" title="inductive">uop</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a><br/>
+| <a name="keop2r"><span class="id" title="constructor">keop2r</span></a> : <a class="idref" href="val.html#bop"><span class="id" title="inductive">bop</span></a> -&gt; <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a><br/>
+| <a name="keop2l"><span class="id" title="constructor">keop2l</span></a>: <a class="idref" href="val.html#bop"><span class="id" title="inductive">bop</span></a> -&gt; <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt;<a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a><br/>
+| <a name="kederef"><span class="id" title="constructor">kederef</span></a> : <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> <br/>
+| <a name="keoffset"><span class="id" title="constructor">keoffset</span></a>: <a class="idref" href="Integers.html#int32"><span class="id" title="abbreviation">int32</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a><br/>
+| <a name="kearrbase"><span class="id" title="constructor">kearrbase</span></a>: <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a><br/>
+| <a name="kearrindex"><span class="id" title="constructor">kearrindex</span></a>: <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a><br/>
+| <a name="kecast"><span class="id" title="constructor">kecast</span></a>: <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="stmtcont"><span class="id" title="inductive">stmtcont</span></a>:=<br/>
+| <a name="kstop"><span class="id" title="constructor">kstop</span></a> : <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kseq"><span class="id" title="constructor">kseq</span></a> : <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kcall"><span class="id" title="constructor">kcall</span></a> : <a class="idref" href="language.html#fid"><span class="id" title="definition">fid</span></a>  -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="memory.html#env"><span class="id" title="definition">env</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kint"><span class="id" title="constructor">kint</span></a> : <a class="idref" href="language.html#cureval"><span class="id" title="inductive">cureval</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="memory.html#env"><span class="id" title="definition">env</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kassignr"><span class="id" title="constructor">kassignr</span></a>: <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kassignl"><span class="id" title="constructor">kassignl</span></a> : <a class="idref" href="memdata.html#val"><span class="id" title="inductive">val</span></a> -&gt; <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kfuneval"><span class="id" title="constructor">kfuneval</span></a> : <a class="idref" href="language.html#fid"><span class="id" title="definition">fid</span></a> -&gt; <a class="idref" href="language.html#vallist"><span class="id" title="definition">vallist</span></a> -&gt; <a class="idref" href="language.html#typelist"><span class="id" title="definition">typelist</span></a> -&gt; <a class="idref" href="language.html#exprlist"><span class="id" title="definition">exprlist</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kif"><span class="id" title="constructor">kif</span></a> : <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kwhile"><span class="id" title="constructor">kwhile</span></a> : <a class="idref" href="language.html#expr"><span class="id" title="inductive">expr</span></a> -&gt; <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+| <a name="kret"><span class="id" title="constructor">kret</span></a> :   <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a><br/>
+<br/>
+| <a name="kevent"><span class="id" title="constructor">kevent</span></a> : <a class="idref" href="language.html#cureval"><span class="id" title="inductive">cureval</span></a> -&gt; <a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a> -&gt; <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span>  <a name="cont"><span class="id" title="definition">cont</span></a> := (<a class="idref" href="language.html#exprcont"><span class="id" title="inductive">exprcont</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#stmtcont"><span class="id" title="inductive">stmtcont</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of low-level and high-level code
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="code"><span class="id" title="definition">code</span></a>  := (<a class="idref" href="language.html#cureval"><span class="id" title="inductive">cureval</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#cont"><span class="id" title="definition">cont</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="CodeSpec"><span class="id" title="module">CodeSpec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="CodeSpec.B"><span class="id" title="definition">B</span></a>:= <a class="idref" href="language.html#CodeSpec.code"><span class="id" title="definition">code</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#CodeSpec"><span class="id" title="module">CodeSpec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Import</span> <span class="id" title="var">MapLib</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="TasksMod"><span class="id" title="module">TasksMod</span></a> := <a class="idref" href="MapLib.html#MapFun"><span class="id" title="module">MapFun</span></a> <a class="idref" href="language.html#tidspec"><span class="id" title="module">tidspec</span></a> <a class="idref" href="language.html#CodeSpec"><span class="id" title="module">CodeSpec</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of task pool of low-level and high-level machine
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="tasks"><span class="id" title="definition">tasks</span></a> :=<a class="idref" href="language.html#TasksMod.map"><span class="id" title="definition">TasksMod.map</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="EnvSpec"><span class="id" title="module">EnvSpec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="EnvSpec.B"><span class="id" title="definition">B</span></a>:= <a class="idref" href="memory.html#env"><span class="id" title="definition">env</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#EnvSpec"><span class="id" title="module">EnvSpec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="CltEnvMod"><span class="id" title="module">CltEnvMod</span></a>:= <a class="idref" href="MapLib.html#MapFun"><span class="id" title="module">MapFun</span></a> <a class="idref" href="language.html#tidspec"><span class="id" title="module">tidspec</span></a> <a class="idref" href="language.html#EnvSpec"><span class="id" title="module">EnvSpec</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of local symbol table
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="cltenvs"><span class="id" title="definition">cltenvs</span></a> := <a class="idref" href="language.html#CltEnvMod.map"><span class="id" title="definition">CltEnvMod.map</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">type_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of C states, which consist of global symbol table, local symbol tables and memory
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span>  <a name="clientst"><span class="id" title="definition">clientst</span></a> :=  (<a class="idref" href="memory.html#env"><span class="id" title="definition">env</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#cltenvs"><span class="id" title="definition">cltenvs</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="memory.html#mem"><span class="id" title="definition">mem</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+'ie' is a boolean flag used to turn on/off interrupts.
+'isr' is a sequence of boolean flags, one for each interrupt. The stack 'cs' records
+the historical values of 'ie', which are pushed whenever the execution enters a
+critical region. It is used to support nested critical regions. The task-local stack
+'is' records the sequence of interrupts that interrupt the execution of this task. It is
+auxiliary data introduced for verification purpose. Then the task-local interrupt
+status 'localst' is defined as a triple (ie, is, cs). 'ltaskstset' records the 'localst'
+of each task. The kernel-level state 'osstate' consists of the general C state 'clientst',
+the global 'isr' register and the set 'localst' of task-local interrupt status.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="ie"><span class="id" title="definition">ie</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="is"><span class="id" title="definition">is</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="cs"><span class="id" title="definition">cs</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="language.html#ie"><span class="id" title="definition">ie</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the local states of interrupts
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="localst"><span class="id" title="definition">localst</span></a> := (<a class="idref" href="language.html#ie"><span class="id" title="definition">ie</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#is"><span class="id" title="definition">is</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#cs"><span class="id" title="definition">cs</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="LocalStSpec"><span class="id" title="module">LocalStSpec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="LocalStSpec.B"><span class="id" title="definition">B</span></a>:= <a class="idref" href="language.html#LocalStSpec.localst"><span class="id" title="definition">localst</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="language.html#LocalStSpec"><span class="id" title="module">LocalStSpec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="TaskLStMod"><span class="id" title="module">TaskLStMod</span></a>:= <a class="idref" href="MapLib.html#MapFun"><span class="id" title="module">MapFun</span></a> <a class="idref" href="language.html#tidspec"><span class="id" title="module">tidspec</span></a> <a class="idref" href="language.html#LocalStSpec"><span class="id" title="module">LocalStSpec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="ltaskstset"><span class="id" title="definition">ltaskstset</span></a>:= <a class="idref" href="language.html#TaskLStMod.map"><span class="id" title="definition">TaskLStMod.map</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the isr register
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="isr"><span class="id" title="definition">isr</span></a> :=  <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="isrupd"><span class="id" title="definition">isrupd</span></a> (<span class="id" title="var">r</span> : <a class="idref" href="language.html#isr"><span class="id" title="definition">isr</span></a>) (<span class="id" title="var">x</span> : <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a>) (<span class="id" title="var">b</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>):= <br/>
+&nbsp;&nbsp;<span class="id" title="keyword">fun</span> (<span class="id" title="var">y</span> : <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a>) =&gt; <span class="id" title="keyword">if</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Arith.EqNat.html#beq_nat"><span class="id" title="definition">beq_nat</span></a> <a class="idref" href="language.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="language.html#y"><span class="id" title="variable">y</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="language.html#b"><span class="id" title="variable">b</span></a> <span class="id" title="keyword">else</span> <a class="idref" href="language.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="language.html#y"><span class="id" title="variable">y</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a name="leb_nat"><span class="id" title="definition">leb_nat</span></a> (<span class="id" title="var">m</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="language.html#m"><span class="id" title="variable">m</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> =&gt; <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">m&acute;</span> =&gt; <span class="id" title="keyword">fun</span> <span class="id" title="var">n</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> =&gt; <span class="id" title="keyword">match</span> <a class="idref" href="language.html#n"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a>  =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">n&acute;</span> =&gt;  <a class="idref" href="language.html#leb_nat"><span class="id" title="definition">leb_nat</span></a>  <span class="id" title="var">m&acute;</span> <span class="id" title="var">n&acute;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <a name="highpri&acute;"><span class="id" title="definition">highpri&acute;</span></a> (<span class="id" title="var">r</span> : <a class="idref" href="language.html#isr"><span class="id" title="definition">isr</span></a>) (<span class="id" title="var">n</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="language.html#n"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> =&gt; <a class="idref" href="language.html#INUM"><span class="id" title="definition">INUM</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">n&acute;</span> =&gt; <span class="id" title="keyword">let</span> <span class="id" title="var">y</span> := <a class="idref" href="language.html#highpri&acute;"><span class="id" title="definition">highpri&acute;</span></a> <a class="idref" href="language.html#r"><span class="id" title="variable">r</span></a> <span class="id" title="var">n&acute;</span> <span class="id" title="keyword">in</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <a class="idref" href="language.html#r"><span class="id" title="variable">r</span></a> <span class="id" title="var">n&acute;</span> <span class="id" title="keyword">then</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> (<a class="idref" href="language.html#leb_nat"><span class="id" title="definition">leb_nat</span></a>  <span class="id" title="var">n&acute;</span> <a class="idref" href="language.html#y"><span class="id" title="variable">y</span></a>) <span class="id" title="keyword">then</span> <span class="id" title="var">n&acute;</span> <span class="id" title="keyword">else</span> <a class="idref" href="language.html#y"><span class="id" title="variable">y</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">else</span> <a class="idref" href="language.html#y"><span class="id" title="variable">y</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="highpri"><span class="id" title="definition">highpri</span></a> (<span class="id" title="var">r</span>:<a class="idref" href="language.html#isr"><span class="id" title="definition">isr</span></a>) := <a class="idref" href="language.html#highpri&acute;"><span class="id" title="definition">highpri&acute;</span></a> <a class="idref" href="language.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="language.html#INUM"><span class="id" title="definition">INUM</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="higherint"><span class="id" title="definition">higherint</span></a> (<span class="id" title="var">r</span>:<a class="idref" href="language.html#isr"><span class="id" title="definition">isr</span></a>) (<span class="id" title="var">i</span>:<a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a>) :=  <span class="id" title="keyword">forall</span> <span class="id" title="var">i&acute;</span>, <a class="idref" href="language.html#i&acute;"><span class="id" title="variable">i&acute;</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Peano.html#9b077c369e19739ef880736ba34623ff"><span class="id" title="notation">&lt;=</span></a> <a class="idref" href="language.html#i"><span class="id" title="variable">i</span></a> -&gt; <a class="idref" href="language.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="language.html#i&acute;"><span class="id" title="variable">i&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="empisr"><span class="id" title="definition">empisr</span></a> := <span class="id" title="keyword">fun</span> (<span class="id" title="var">x</span> : <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a>) =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the low-level kernel state
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span>  <a name="osstate"><span class="id" title="definition">osstate</span></a>  := (<a class="idref" href="language.html#clientst"><span class="id" title="definition">clientst</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#isr"><span class="id" title="definition">isr</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#ltaskstset"><span class="id" title="definition">ltaskstset</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span>  <a name="smem"><span class="id" title="definition">smem</span></a>  :=  (<a class="idref" href="memory.html#env"><span class="id" title="definition">env</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="memory.html#env"><span class="id" title="definition">env</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="memory.html#mem"><span class="id" title="definition">mem</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span>  <a name="taskst"><span class="id" title="definition">taskst</span></a> := (<a class="idref" href="language.html#smem"><span class="id" title="definition">smem</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a>  <a class="idref" href="language.html#isr"><span class="id" title="definition">isr</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#localst"><span class="id" title="definition">localst</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="get_smem"><span class="id" title="definition">get_smem</span></a> (<span class="id" title="var">ts</span> : <a class="idref" href="language.html#taskst"><span class="id" title="definition">taskst</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="language.html#ts"><span class="id" title="variable">ts</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">m</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">_</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">_</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> =&gt; <span class="id" title="var">m</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the low-level world
+
+<div class="paragraph"> </div>
+
+The whole program configuration 'lworld'  consists of the program 'lprog',
+the task pool 'tasks', the client state 'clientst', the kernel state 'osstate',
+and the identifier t of the current task. Note that W contains two pieces of 'clientst',
+one for user applications (clients), the other inside 'osstate' for the kernel.
+Separating the data into two parts prevents user applications from accessing kernel data.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span>  <a name="lworld"><span class="id" title="definition">lworld</span></a> :=  (<a class="idref" href="language.html#lprog"><span class="id" title="definition">lprog</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#tasks"><span class="id" title="definition">tasks</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#clientst"><span class="id" title="definition">clientst</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#osstate"><span class="id" title="definition">osstate</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#tid"><span class="id" title="definition">tid</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="funtype"><span class="id" title="definition">funtype</span></a> : <span class="id" title="keyword">Set</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a> <a class="idref" href="memdata.html#type"><span class="id" title="inductive">type</span></a> <a class="idref" href="language.html#typelist"><span class="id" title="definition">typelist</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="api_code"><span class="id" title="definition">api_code</span></a> := <a class="idref" href="language.html#vallist"><span class="id" title="definition">vallist</span></a> -&gt; <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="osapi"><span class="id" title="definition">osapi</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#prod"><span class="id" title="inductive">prod</span></a> <a class="idref" href="language.html#api_code"><span class="id" title="definition">api_code</span></a>  <a class="idref" href="language.html#funtype"><span class="id" title="definition">funtype</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="osapispec"><span class="id" title="definition">osapispec</span></a> :=  <a class="idref" href="language.html#fid"><span class="id" title="definition">fid</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="language.html#osapi"><span class="id" title="definition">osapi</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="int_code"><span class="id" title="definition">int_code</span></a> := <a class="idref" href="language.html#spec_code"><span class="id" title="inductive">spec_code</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="osintspec"><span class="id" title="definition">osintspec</span></a> := <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="language.html#int_code"><span class="id" title="definition">int_code</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="ossched"><span class="id" title="definition">ossched</span></a> := <a class="idref" href="language.html#osabst"><span class="id" title="definition">osabst</span></a> -&gt; <a class="idref" href="language.html#tid"><span class="id" title="definition">tid</span></a> -&gt; <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="osspec"><span class="id" title="definition">osspec</span></a> := (<a class="idref" href="language.html#osapispec"><span class="id" title="definition">osapispec</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#osintspec"><span class="id" title="definition">osintspec</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#ossched"><span class="id" title="definition">ossched</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the high-level program
+
+<div class="paragraph"> </div>
+
+the whole high-level program 'hprog' consists of the application code and the abstract
+specification of the kernel 'osspec'. The application code is the same as in the low-level
+language. 'osspec' contains the specifications 'osapispec' for kernel APIs, 'osintspec' for
+interrupt handlers, and 'ossched' for the scheduler. The high-level program configuration
+'hworld' consists of the high-level program 'hprog', the task pool 'tasks', the client state
+'clientst', and the abstract kernel state 'osabst'. Programmers at this level have no control
+over interrupts (e.g., enabling or disabling interrupts). Always enabled, interrupts are modeled
+implicitly as abstract external events that may occur non-deterministically at any program
+points. Handlers of the events are also specified as 'osintspec' in 'osspec'.
+At the high level an incoming level-k event is always handled by executing 'osintspec k'.
+The interrupt handlers are specified as an abstract statement 'spec_code' and
+The system APIs (osapi,funtype) consist of the type of the API 'funtype' and the abstract
+spec 'osapi' which maps the values of arguments to a 'spec_code'.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="hprog"><span class="id" title="definition">hprog</span></a> := (<a class="idref" href="language.html#progunit"><span class="id" title="definition">progunit</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#osspec"><span class="id" title="definition">osspec</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the high-level world
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="hworld"><span class="id" title="definition">hworld</span></a> := (<a class="idref" href="language.html#hprog"><span class="id" title="definition">hprog</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#tasks"><span class="id" title="definition">tasks</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#clientst"><span class="id" title="definition">clientst</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#osabst"><span class="id" title="definition">osabst</span></a> ).<br/>
+
+<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Local</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">Z_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="isrdy"><span class="id" title="definition">isrdy</span></a> (<span class="id" title="var">st</span>:<a class="idref" href="language.html#taskstatus"><span class="id" title="inductive">taskstatus</span></a>):=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="language.html#st"><span class="id" title="variable">st</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="language.html#rdy"><span class="id" title="constructor">rdy</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#True"><span class="id" title="inductive">True</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

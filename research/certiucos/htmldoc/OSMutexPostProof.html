@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>OSMutexPostProof</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library OSMutexPostProof</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Int8u ·OSMutexPost·(⌞pevent @ OS_EVENT∗ ⌟)··{
+        ⌞
+         x @ Int8u;
+         pip @ Int8u;
+         prio  @ Int8u;
+         legal @ Int8u
+        ⌟;
+
+<div class="paragraph"> </div>
+
+1       If (pevent′ ==ₑ NULL)
+        {
+2          RETURN ′OS_ERR_PEVENT_NULL
+        };ₛ
+3       ENTER_CRITICAL;ₛ
+4       legal′ =ᶠ OS_EventSearch(·pevent′·);ₛ
+5       If (legal′ ==ₑ ′0)
+        {
+6           EXIT_CRITICAL;ₛ
+7           RETURN ′OS_ERR_PEVENT_NO_EX
+        };ₛ
+8       If (pevent′→OSEventType !=ₑ ′OS_EVENT_TYPE_MUTEX)
+        {
+9           EXIT_CRITICAL;ₛ
+10          RETURN ′OS_ERR_EVENT_TYPE
+        };ₛ
+
+<div class="paragraph"> </div>
+
+11      pip′  =ₑ 〈Int8u〉(pevent′→OSEventCnt ≫ ′8);ₛ
+12      prio′ =ₑ 〈Int8u〉(pevent′→OSEventCnt &amp;ₑ ′OS_MUTEX_KEEP_LOWER_8);ₛ    
+13      If (OSTCBCur′ !=ₑ pevent′→OSEventPtr)
+        {   14          EXIT_CRITICAL;ₛ
+15          RETURN ′OS_ERR_NOT_MUTEX_OWNER
+        };ₛ                                                                     
+16      If (OSTCBCur′→OSTCBPrio &lt;ₑ pip′)
+        {
+17          EXIT_CRITICAL;ₛ
+18          RETURN ′OS_ERR_MUTEX_PRIO
+        };ₛ
+19      If (OSTCBCur′→OSTCBPrio ==ₑ pip′)
+        {
+                              20          If ( OSTCBPrioTbl′<span class="inlinecode"><span class="id" title="var">prio</span>′</span>  !=ₑ 〈OS_TCB ∗〉 PlaceHolder)
+            {
+21              EXIT_CRITICAL;ₛ
+22              RETURN ′OS_ERR_ORIGINAL_NOT_HOLDER
+            };ₛ
+23          OSRdyTbl′<span class="inlinecode"><span class="id" title="var">OSTCBCur</span>′→<span class="id" title="var">OSTCBY</span></span> =ₑ OSRdyTbl′<span class="inlinecode"><span class="id" title="var">OSTCBCur</span>′→<span class="id" title="var">OSTCBY</span></span> &amp;ₑ (∼OSTCBCur′→OSTCBBitX);ₛ
+24          If ( OSRdyTbl′<span class="inlinecode"><span class="id" title="var">OSTCBCur</span>′→<span class="id" title="var">OSTCBY</span></span> ==ₑ ′0)
+            {
+25              OSRdyGrp′ =ₑ OSRdyGrp′ &amp;ₑ ∼OSTCBCur′→OSTCBBitY
+            };ₛ
+26          OSTCBCur′→OSTCBPrio         =ₑ prio′;ₛ
+27          OSTCBCur′→OSTCBY            =ₑ prio′ ≫  ′3;ₛ
+28          OSTCBCur′→OSTCBBitY         =ₑ OSMapTbl′<span class="inlinecode"><span class="id" title="var">OSTCBCur</span>′→<span class="id" title="var">OSTCBY</span></span>;ₛ
+29          OSTCBCur′→OSTCBX            =ₑ prio′ &amp;ₑ ′7;ₛ
+30          OSTCBCur′→OSTCBBitX         =ₑ OSMapTbl′<span class="inlinecode"><span class="id" title="var">OSTCBCur</span>′→<span class="id" title="var">OSTCBX</span></span>;ₛ
+31          OSRdyGrp′                    =ₑ OSRdyGrp′ |ₑ OSTCBCur′→OSTCBBitY;ₛ
+32          OSRdyTbl′<span class="inlinecode"><span class="id" title="var">OSTCBCur</span>′→<span class="id" title="var">OSTCBY</span></span> =ₑ OSRdyTbl′<span class="inlinecode"><span class="id" title="var">OSTCBCur</span>′→<span class="id" title="var">OSTCBY</span></span> |ₑ OSTCBCur′→OSTCBBitX;ₛ
+33          OSTCBPrioTbl′<span class="inlinecode"><span class="id" title="var">prio</span>′</span>         =ₑ 〈OS_TCB ∗〉 OSTCBCur′;ₛ
+34          OSTCBPrioTbl′<span class="inlinecode"><span class="id" title="var">pip</span>′</span>          =ₑ 〈OS_TCB ∗〉 PlaceHolder
+        };ₛ
+        35      If (pevent′→OSEventGrp !=ₑ ′0)
+        {
+36          x′ =ₑ ′OS_STAT_MUTEX;ₛ 
+37          prio′ =ᶠ OS_EventTaskRdy(·pevent′, pevent′, x′·);ₛ
+38          pevent′→OSEventCnt =ₑ pevent′→OSEventCnt &amp;ₑ ′OS_MUTEX_KEEP_UPPER_8;ₛ  39          pevent′→OSEventCnt =ₑ pevent′→OSEventCnt |ₑ prio′;ₛ
+40          pevent′→OSEventPtr =ₑ OSTCBPrioTbl′<span class="inlinecode"><span class="id" title="var">prio</span>′</span>;ₛ                 41          EXIT_CRITICAL;ₛ
+42          OS_Sched(­);ₛ
+43          RETURN ′OS_NO_ERR 
+        };ₛ
+44      pevent′→OSEventCnt =ₑ pevent′→OSEventCnt |ₑ ′OS_MUTEX_AVAILABLE;ₛ 45      pevent′→OSEventPtr =ₑ NULL;ₛ
+        46      EXIT_CRITICAL;ₛ
+47      RETURN ′OS_NO_ERR 
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ucert.html#"><span class="id" title="library">ucert</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_defs.html#"><span class="id" title="library">os_code_defs</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mathlib.html#"><span class="id" title="library">mathlib</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutex_common.html#"><span class="id" title="library">OSMutex_common</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="lab.html#"><span class="id" title="library">lab</span></a>.<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">code_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="OSMutexPostRight"><span class="id" title="lemma">OSMutexPostRight</span></a>: <br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">vl</span> <span class="id" title="var">p</span> <span class="id" title="var">r</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="OSMutexPostProof.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="auxdef.html#BuildPreA&acute;"><span class="id" title="definition">BuildPreA&acute;</span></a> <a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMutexPost"><span class="id" title="definition">OSMutexPost</span></a> <a class="idref" href="absop.html#mutexpostapi"><span class="id" title="definition">mutexpostapi</span></a> <a class="idref" href="OSMutexPostProof.html#vl"><span class="id" title="variable">vl</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="OSMutexPostProof.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="auxdef.html#BuildRetA&acute;"><span class="id" title="definition">BuildRetA&acute;</span></a> <a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMutexPost"><span class="id" title="definition">OSMutexPost</span></a> <a class="idref" href="absop.html#mutexpostapi"><span class="id" title="definition">mutexpostapi</span></a>  <a class="idref" href="OSMutexPostProof.html#vl"><span class="id" title="variable">vl</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="LibTactics.html#645ed6754f9d4452ad12f0d16c808957"><span class="id" title="notation">exists</span></a> <span class="id" title="var">t</span> <span class="id" title="var">d1</span> <span class="id" title="var">d2</span> <span class="id" title="var">s</span><a class="idref" href="LibTactics.html#645ed6754f9d4452ad12f0d16c808957"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMutexPost"><span class="id" title="definition">OSMutexPost</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">t</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">d1</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">d2</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">s</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">/\</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{|</span></a> <a class="idref" href="InternalFunSpec.html#OSQ_spec"><span class="id" title="definition">OSQ_spec</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="absop.html#GetHPrio"><span class="id" title="definition">GetHPrio</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="inv_prop.html#I"><span class="id" title="definition">I</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="OSMutexPostProof.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="assertion.html#Afalse"><span class="id" title="constructor">Afalse</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">|}</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">|-</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{{</span></a> <a class="idref" href="OSMutexPostProof.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">}}</span></a> <span class="id" title="var">s</span> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{{</span></a> <a class="idref" href="assertion.html#Afalse"><span class="id" title="constructor">Afalse</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">}}</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">code_scope</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="os_code_defs.html#OS_EVENT_TBL_SIZE"><span class="id" title="definition">OS_EVENT_TBL_SIZE</span></a> : <span class="id" title="var">tlib</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="OSMutex_common.html#intlt2nat"><span class="id" title="lemma">intlt2nat</span></a> : <span class="id" title="var">tlib</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="OSMutex_common.html#int8ule255"><span class="id" title="lemma">int8ule255</span></a> : <span class="id" title="var">tlib</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="symbolic_execution.html#array_type_vallist_match_imp_rule_type_val_match"><span class="id" title="lemma">array_type_vallist_match_imp_rule_type_val_match</span></a> : <span class="id" title="var">tlib</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">mew2</span> := <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">(</span></a><span class="id" title="keyword">if</span> <span class="id" title="var">_</span> <span class="id" title="keyword">then</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <span class="id" title="keyword">else</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> =&gt; <span class="id" title="tactic">rewrite</span> <a class="idref" href="OSMutex_common.html#ifE"><span class="id" title="lemma">ifE</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- (<span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#9d6de4e158d44f421e7d5e9f911ed4b1"><span class="id" title="notation">&lt;=?</span></a> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>) =&gt; <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.Zbool.html#Zle_imp_le_bool"><span class="id" title="lemma">Zle_imp_le_bool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- (<span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#208bafb0e148fe7fb7dcd812c227f4ee"><span class="id" title="notation">&lt;=</span></a> <span class="id" title="var">_</span> ) =&gt; <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.Zbool.html#Zle_bool_imp_le"><span class="id" title="lemma">Zle_bool_imp_le</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="OSMutex_common.html#ifE"><span class="id" title="lemma">ifE</span></a> : <span class="id" title="var">tlib</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.Zbool.html#Zle_imp_le_bool"><span class="id" title="lemma">Zle_imp_le_bool</span></a> : <span class="id" title="var">tlib</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="mathlib.html#OSUnMapVallist_type_vallist_match"><span class="id" title="lemma">OSUnMapVallist_type_vallist_match</span></a>: <span class="id" title="var">tlib</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">copy</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">type</span> <span class="id" title="var">of</span> <span class="id" title="var">H1</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| ?<span class="id" title="var">T</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span>(<span class="id" title="var">T</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">H2</span> <span class="id" title="tactic">by</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">H1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSMutexPostPart2.html#"><span class="id" title="library">OSMutexPostPart2</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

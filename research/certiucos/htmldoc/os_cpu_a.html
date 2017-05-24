@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>os_cpu_a</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library os_cpu_a</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_defs.html#"><span class="id" title="library">os_code_defs</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_notations.html#"><span class="id" title="library">os_code_notations</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_ucos_h.html#"><span class="id" title="library">os_ucos_h</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">code_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="642ae8ba75a574e3bef9a60a3fc94c5d"><span class="id" title="notation">&quot;</span></a> hid &acute;↝&acute; &acute;{&acute; stmts &acute;}&acute; " := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">hid</span>%<span class="id" title="var">nat</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">stmts</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a>  (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 90): <span class="id" title="var">code_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTickISR_impl"><span class="id" title="definition">OSTickISR_impl</span></a>  :=<br/>
+&nbsp;<a class="idref" href="os_code_defs.html#OSTickISR"><span class="id" title="definition">OSTickISR</span></a> <a class="idref" href="os_cpu_a.html#642ae8ba75a574e3bef9a60a3fc94c5d"><span class="id" title="notation">↝</span></a> <br/>
+&nbsp;<a class="idref" href="os_cpu_a.html#642ae8ba75a574e3bef9a60a3fc94c5d"><span class="id" title="notation">{</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_notations.html#ae1cd6b82c8e26240086fdf45b55e5de"><span class="id" title="notation">EOI</span></a><a class="idref" href="os_code_notations.html#ae1cd6b82c8e26240086fdf45b55e5de"><span class="id" title="notation">(</span></a>0<a class="idref" href="os_code_notations.html#ae1cd6b82c8e26240086fdf45b55e5de"><span class="id" title="notation">)</span></a><a class="idref" href="os_code_notations.html#584f9cbcd681e8c62f02eea21fbab677"><span class="id" title="notation">;ₛ</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_defs.html#OSTimeTick"><span class="id" title="definition">OSTimeTick</span></a><a class="idref" href="os_code_notations.html#8952ace13871d6fd71d854c8891f2165"><span class="id" title="notation">(­)</span></a><a class="idref" href="os_code_notations.html#584f9cbcd681e8c62f02eea21fbab677"><span class="id" title="notation">;ₛ</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_defs.html#OSIntExit"><span class="id" title="definition">OSIntExit</span></a><a class="idref" href="os_code_notations.html#8952ace13871d6fd71d854c8891f2165"><span class="id" title="notation">(­)</span></a><a class="idref" href="os_code_notations.html#584f9cbcd681e8c62f02eea21fbab677"><span class="id" title="notation">;ₛ</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_notations.html#5e8192ed1244321a91abcad547c652af"><span class="id" title="notation">IRET</span></a><br/>
+&nbsp;<a class="idref" href="os_cpu_a.html#642ae8ba75a574e3bef9a60a3fc94c5d"><span class="id" title="notation">}</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSToyISR_impl"><span class="id" title="definition">OSToyISR_impl</span></a>  :=<br/>
+&nbsp;<a class="idref" href="os_code_defs.html#OSToyISR"><span class="id" title="definition">OSToyISR</span></a> <a class="idref" href="os_cpu_a.html#642ae8ba75a574e3bef9a60a3fc94c5d"><span class="id" title="notation">↝</span></a> <br/>
+&nbsp;<a class="idref" href="os_cpu_a.html#642ae8ba75a574e3bef9a60a3fc94c5d"><span class="id" title="notation">{</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_notations.html#7cb087c7c5750d6dbd9a62c1b31dc7ae"><span class="id" title="notation">++</span></a><a class="idref" href="os_code_defs.html#OSIntToyCount"><span class="id" title="definition">OSIntToyCount</span></a><a class="idref" href="os_code_notations.html#9a6640cfb4add4eecaa3a13c7e614690"><span class="id" title="notation">′</span></a><a class="idref" href="os_code_notations.html#584f9cbcd681e8c62f02eea21fbab677"><span class="id" title="notation">;ₛ</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_notations.html#dccee8fc3998f4bd6c09637430fe184f"><span class="id" title="notation">STI</span></a><a class="idref" href="os_code_notations.html#584f9cbcd681e8c62f02eea21fbab677"><span class="id" title="notation">;ₛ</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_notations.html#ae1cd6b82c8e26240086fdf45b55e5de"><span class="id" title="notation">EOI</span></a><a class="idref" href="os_code_notations.html#ae1cd6b82c8e26240086fdf45b55e5de"><span class="id" title="notation">(</span></a>1<a class="idref" href="os_code_notations.html#ae1cd6b82c8e26240086fdf45b55e5de"><span class="id" title="notation">)</span></a><a class="idref" href="os_code_notations.html#584f9cbcd681e8c62f02eea21fbab677"><span class="id" title="notation">;ₛ</span></a>     <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_defs.html#OSIntExit"><span class="id" title="definition">OSIntExit</span></a><a class="idref" href="os_code_notations.html#8952ace13871d6fd71d854c8891f2165"><span class="id" title="notation">(­)</span></a><a class="idref" href="os_code_notations.html#584f9cbcd681e8c62f02eea21fbab677"><span class="id" title="notation">;ₛ</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_code_notations.html#5e8192ed1244321a91abcad547c652af"><span class="id" title="notation">IRET</span></a><br/>
+&nbsp;<a class="idref" href="os_cpu_a.html#642ae8ba75a574e3bef9a60a3fc94c5d"><span class="id" title="notation">}</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="ifun"><span class="id" title="definition">ifun</span></a> := (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">*</span></a> <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a>).<br/>
+<span class="id" title="keyword">Fixpoint</span>  <a name="convert_ifuns"><span class="id" title="definition">convert_ifuns</span></a> (<span class="id" title="var">ls</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="os_cpu_a.html#ifun"><span class="id" title="definition">ifun</span></a>)  : <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a> -&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="language.html#stmts"><span class="id" title="inductive">stmts</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="os_cpu_a.html#ls"><span class="id" title="variable">ls</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> =&gt; <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| (<span class="id" title="var">x</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="var">ls&acute;</span>)%<span class="id" title="var">list</span> =&gt; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">x</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">id</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">imp</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> =&gt; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> (<span class="id" title="var">id&acute;</span> : <a class="idref" href="language.html#hid"><span class="id" title="definition">hid</span></a>) =&gt; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Arith.EqNat.html#beq_nat"><span class="id" title="definition">EqNat.beq_nat</span></a> <span class="id" title="var">id</span> <a class="idref" href="os_cpu_a.html#id&acute;"><span class="id" title="variable">id&acute;</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">imp</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">else</span> (<a class="idref" href="os_cpu_a.html#convert_ifuns"><span class="id" title="definition">convert_ifuns</span></a> <span class="id" title="var">ls&acute;</span>) <a class="idref" href="os_cpu_a.html#id&acute;"><span class="id" title="variable">id&acute;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Close</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">code_scope</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

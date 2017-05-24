@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>os_code_defs</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library os_code_defs</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="language.html#"><span class="id" title="library">language</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="opsem.html#"><span class="id" title="library">opsem</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="val.html#"><span class="id" title="library">val</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="memdata.html#"><span class="id" title="library">memdata</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="Integers.html#"><span class="id" title="library">Integers</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.ZArith.html#"><span class="id" title="library">ZArith</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSRunning"><span class="id" title="definition">OSRunning</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 0%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSRdyGrp"><span class="id" title="definition">OSRdyGrp</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 1%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSUnMapTbl"><span class="id" title="definition">OSUnMapTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 2%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSRdyTbl"><span class="id" title="definition">OSRdyTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 3%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSPrioHighRdy"><span class="id" title="definition">OSPrioHighRdy</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 4%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSPrioCur"><span class="id" title="definition">OSPrioCur</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 5%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSStartHighRdy"><span class="id" title="definition">OSStartHighRdy</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 6%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSIntNesting"><span class="id" title="definition">OSIntNesting</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 7%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSIntExitY"><span class="id" title="definition">OSIntExitY</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 8%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSCtxSwCtr"><span class="id" title="definition">OSCtxSwCtr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 9%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSInitHookBegin"><span class="id" title="definition">OSInitHookBegin</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 10%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSInitHookEnd"><span class="id" title="definition">OSInitHookEnd</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 11%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_InitMisc"><span class="id" title="definition">OS_InitMisc</span></a> := 12%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_InitRdyList"><span class="id" title="definition">OS_InitRdyList</span></a> := 13%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_InitSTKList"><span class="id" title="definition">OS_InitSTKList</span></a> := 14%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_InitTCBList"><span class="id" title="definition">OS_InitTCBList</span></a> := 15%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_InitEventList"><span class="id" title="definition">OS_InitEventList</span></a> := 16%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_QInit"><span class="id" title="definition">OS_QInit</span></a> := 17%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_SemInit"><span class="id" title="definition">OS_SemInit</span></a> := 18%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_InitTaskIdle"><span class="id" title="definition">OS_InitTaskIdle</span></a> := 19%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_TCBInit"><span class="id" title="definition">OS_TCBInit</span></a> := 20%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSStatRdy"><span class="id" title="definition">OSStatRdy</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 21%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMapTbl"><span class="id" title="definition">OSMapTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 22%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSEventGrp"><span class="id" title="definition">OSEventGrp</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 23%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSEventCnt"><span class="id" title="definition">OSEventCnt</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 24%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSEventTbl"><span class="id" title="definition">OSEventTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 25%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSEventListPtr"><span class="id" title="definition">OSEventListPtr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 36%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBEventPtr"><span class="id" title="definition">OSTCBEventPtr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 26%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSEventType"><span class="id" title="definition">OSEventType</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 27%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSEventPtr"><span class="id" title="definition">OSEventPtr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 28%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSEventFreeList"><span class="id" title="definition">OSEventFreeList</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 29%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EventWaitListInit"><span class="id" title="definition">OS_EventWaitListInit</span></a> := 30%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EventTO"><span class="id" title="definition">OS_EventTO</span></a> := 31%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EventTaskRdy"><span class="id" title="definition">OS_EventTaskRdy</span></a> := 32%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EventTaskWait"><span class="id" title="definition">OS_EventTaskWait</span></a> := 33%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQPtr"><span class="id" title="definition">OSQPtr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 34%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSEventList"><span class="id" title="definition">OSEventList</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 35%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSIntToyCount"><span class="id" title="definition">OSIntToyCount</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 500%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQStart"><span class="id" title="definition">OSQStart</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 37%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQEnd"><span class="id" title="definition">OSQEnd</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 38%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQIn"><span class="id" title="definition">OSQIn</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 39%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQOut"><span class="id" title="definition">OSQOut</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 40%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQSize"><span class="id" title="definition">OSQSize</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 41%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQEntries"><span class="id" title="definition">OSQEntries</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 42%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQFreeBlk"><span class="id" title="definition">OSQFreeBlk</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 43%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQFreeBlkTbl"><span class="id" title="definition">OSQFreeBlkTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 44%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQFreeList"><span class="id" title="definition">OSQFreeList</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 45%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQTbl"><span class="id" title="definition">OSQTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 46%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="qfreeblk"><span class="id" title="definition">qfreeblk</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 47%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="nextblk"><span class="id" title="definition">nextblk</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 48%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBDly"><span class="id" title="definition">OSTCBDly</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 51%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBMsg"><span class="id" title="definition">OSTCBMsg</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 52%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBStat"><span class="id" title="definition">OSTCBStat</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 53%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBTbl"><span class="id" title="definition">OSTCBTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 54%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBNext"><span class="id" title="definition">OSTCBNext</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 55%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBPrev"><span class="id" title="definition">OSTCBPrev</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 56%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBFreeList"><span class="id" title="definition">OSTCBFreeList</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 57%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBPrioTbl"><span class="id" title="definition">OSTCBPrioTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 58%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBHighRdy"><span class="id" title="definition">OSTCBHighRdy</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 59%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBList"><span class="id" title="definition">OSTCBList</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 61%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBPrio"><span class="id" title="definition">OSTCBPrio</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 62%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBBitY"><span class="id" title="definition">OSTCBBitY</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 63%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBY"><span class="id" title="definition">OSTCBY</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 64%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBX"><span class="id" title="definition">OSTCBX</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 65%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBBitX"><span class="id" title="definition">OSTCBBitX</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 66%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTCBMutexOwn"><span class="id" title="definition">OSTCBMutexOwn</span></a> :<a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> :=300%<span class="id" title="var">Z</span>.<br/>
+&nbsp;<span class="id" title="keyword">Definition</span> <a name="OS_Sched"><span class="id" title="definition">OS_Sched</span></a> := 67%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSLockNesting"><span class="id" title="definition">OSLockNesting</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 68%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTaskCtr"><span class="id" title="definition">OSTaskCtr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 69%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTaskCreate"><span class="id" title="definition">OSTaskCreate</span></a> := 70%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_TaskIdle"><span class="id" title="definition">OS_TaskIdle</span></a> := 71%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSSTKTbl"><span class="id" title="definition">OSSTKTbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 72%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSSTKFreeList"><span class="id" title="definition">OSSTKFreeList</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 73%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTimeTick"><span class="id" title="definition">OSTimeTick</span></a> := 74%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTime"><span class="id" title="definition">OSTime</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 75%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSIntExit"><span class="id" title="definition">OSIntExit</span></a> := 76%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSIdleCtr"><span class="id" title="definition">OSIdleCtr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 77%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSIdleCtrRun"><span class="id" title="definition">OSIdleCtrRun</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 78%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSIdleCtrMax"><span class="id" title="definition">OSIdleCtrMax</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 79%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSPlaceHolder"><span class="id" title="definition">OSPlaceHolder</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 80%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EventRemove"><span class="id" title="definition">OS_EventRemove</span></a> := 84%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EventSearch"><span class="id" title="definition">OS_EventSearch</span></a> := 85%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="os_event"><span class="id" title="definition">os_event</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 86%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="os_q"><span class="id" title="definition">os_q</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 87%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="os_q_freeblk"><span class="id" title="definition">os_q_freeblk</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 88%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="msgqueuetbl"><span class="id" title="definition">msgqueuetbl</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 89%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="os_tcb"><span class="id" title="definition">os_tcb</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 90%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="os_stk_blk"><span class="id" title="definition">os_stk_blk</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 91%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="taskstk"><span class="id" title="definition">taskstk</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 92%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="os_q_ptr"><span class="id" title="definition">os_q_ptr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 93%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="os_sem_ptr"><span class="id" title="definition">os_sem_ptr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 94%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="qeventptr"><span class="id" title="definition">qeventptr</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 95%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="next"><span class="id" title="definition">next</span></a>: <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 96%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="x"><span class="id" title="definition">x</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 97%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="y"><span class="id" title="definition">y</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 98%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="ptcb"><span class="id" title="definition">ptcb</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 99%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pevent"><span class="id" title="definition">pevent</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 100%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="message"><span class="id" title="definition">message</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 101%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="msk"><span class="id" title="definition">msk</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 102%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="bitx"><span class="id" title="definition">bitx</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 103%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="bity"><span class="id" title="definition">bity</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 104%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="prio"><span class="id" title="definition">prio</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 105%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="ptbl"><span class="id" title="definition">ptbl</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 106%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="i"><span class="id" title="definition">i</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 107%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pevent1"><span class="id" title="definition">pevent1</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 108%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pevent2"><span class="id" title="definition">pevent2</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 109%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="prdytbl"><span class="id" title="definition">prdytbl</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 110%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pstk1"><span class="id" title="definition">pstk1</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 111%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pstk2"><span class="id" title="definition">pstk2</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 112%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="ptcb1"><span class="id" title="definition">ptcb1</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 113%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="ptcb2"><span class="id" title="definition">ptcb2</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 114%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="task"><span class="id" title="definition">task</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 115%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pdata"><span class="id" title="definition">pdata</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 116%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="p"><span class="id" title="definition">p</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 117%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="p1"><span class="id" title="definition">p1</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 118%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="p2"><span class="id" title="definition">p2</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 119%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pq"><span class="id" title="definition">pq</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 120%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pqblk"><span class="id" title="definition">pqblk</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 121%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="start"><span class="id" title="definition">start</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 122%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="err"><span class="id" title="definition">err</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 123%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="tasks_waiting"><span class="id" title="definition">tasks_waiting</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 124%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="timeout"><span class="id" title="definition">timeout</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 125%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="size"><span class="id" title="definition">size</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 126%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="cnt"><span class="id" title="definition">cnt</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 127%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="self"><span class="id" title="definition">self</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 128%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="ticks"><span class="id" title="definition">ticks</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 129%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="legal"><span class="id" title="definition">legal</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 130%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pqptr"><span class="id" title="definition">pqptr</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 131%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="p3"><span class="id" title="definition">p3</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 132%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="pip"><span class="id" title="definition">pip</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 133%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="mprio"><span class="id" title="definition">mprio</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 134%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="isrdy"><span class="id" title="definition">isrdy</span></a> : <a class="idref" href="memdata.html#ident"><span class="id" title="definition">ident</span></a> := 140%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_MAX_EVENTS"><span class="id" title="definition">OS_MAX_EVENTS</span></a> := 10%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_MAX_QS"><span class="id" title="definition">OS_MAX_QS</span></a> := 10%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_MAX_SEM"><span class="id" title="definition">OS_MAX_SEM</span></a> := 10%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_MAX_Q_SIZE"><span class="id" title="definition">OS_MAX_Q_SIZE</span></a> := 20%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_MAX_TASKS"><span class="id" title="definition">OS_MAX_TASKS</span></a> := 30%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_LOWEST_PRIO"><span class="id" title="definition">OS_LOWEST_PRIO</span></a> := 63%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="TASK_STK_SIZE"><span class="id" title="definition">TASK_STK_SIZE</span></a> := 1024%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_PRIO_SELF"><span class="id" title="definition">OS_PRIO_SELF</span></a> := 255%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_N_SYS_TASKS"><span class="id" title="definition">OS_N_SYS_TASKS</span></a> := 2%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_IDLE_PRIO"><span class="id" title="definition">OS_IDLE_PRIO</span></a> := <a class="idref" href="os_code_defs.html#OS_LOWEST_PRIO"><span class="id" title="definition">OS_LOWEST_PRIO</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EVENT_TBL_SIZE"><span class="id" title="definition">OS_EVENT_TBL_SIZE</span></a> := 8%<span class="id" title="var">Z</span>. <span class="id" title="keyword">Definition</span> <a name="OS_RDY_TBL_SIZE"><span class="id" title="definition">OS_RDY_TBL_SIZE</span></a> := 8%<span class="id" title="var">Z</span>. 
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_STAT_RDY"><span class="id" title="definition">OS_STAT_RDY</span></a> := 0%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_STAT_SEM"><span class="id" title="definition">OS_STAT_SEM</span></a> := 1%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_STAT_MBOX"><span class="id" title="definition">OS_STAT_MBOX</span></a> := 2%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_STAT_Q"><span class="id" title="definition">OS_STAT_Q</span></a> := 4%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_STAT_SUSPEND"><span class="id" title="definition">OS_STAT_SUSPEND</span></a> := 8%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_STAT_MUTEX"><span class="id" title="definition">OS_STAT_MUTEX</span></a> := 16%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_STAT_FLAG"><span class="id" title="definition">OS_STAT_FLAG</span></a> := 32%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EVENT_TYPE_UNUSED"><span class="id" title="definition">OS_EVENT_TYPE_UNUSED</span></a> := 0%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EVENT_TYPE_MBOX"><span class="id" title="definition">OS_EVENT_TYPE_MBOX</span></a> := 1%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EVENT_TYPE_Q"><span class="id" title="definition">OS_EVENT_TYPE_Q</span></a> := 2%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EVENT_TYPE_SEM"><span class="id" title="definition">OS_EVENT_TYPE_SEM</span></a> := 3%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_EVENT_TYPE_MUTEX"><span class="id" title="definition">OS_EVENT_TYPE_MUTEX</span></a> := 4%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_NO_ERR"><span class="id" title="definition">OS_NO_ERR</span></a> := 0%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_EVENT_TYPE"><span class="id" title="definition">OS_ERR_EVENT_TYPE</span></a> := 1%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_PEND_ISR"><span class="id" title="definition">OS_ERR_PEND_ISR</span></a> := 2%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_POST_NULL_PTR"><span class="id" title="definition">OS_ERR_POST_NULL_PTR</span></a> :=3%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_PEVENT_NULL"><span class="id" title="definition">OS_ERR_PEVENT_NULL</span></a> := 4%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_TASK_WAITING"><span class="id" title="definition">OS_ERR_TASK_WAITING</span></a> := 8%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_TIMEOUT"><span class="id" title="definition">OS_TIMEOUT</span></a> := 10%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_Q_FULL"><span class="id" title="definition">OS_Q_FULL</span></a> := 30%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_STAT_ERR"><span class="id" title="definition">OS_STAT_ERR</span></a> := 31%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_NOT_MUTEX_OWNER"><span class="id" title="definition">OS_ERR_NOT_MUTEX_OWNER</span></a> := 120%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_MUTEX_PRIO"><span class="id" title="definition">OS_ERR_MUTEX_PRIO</span></a> := 121%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_PEVENT_NO_EX"><span class="id" title="definition">OS_ERR_PEVENT_NO_EX</span></a> := 122%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_IDLE"><span class="id" title="definition">OS_ERR_IDLE</span></a> := 123%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_STAT"><span class="id" title="definition">OS_ERR_STAT</span></a> := 124%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_OWN"><span class="id" title="definition">OS_ERR_OWN</span></a> := 125%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_MUTEXPR_NOT_HOLDER"><span class="id" title="definition">OS_ERR_MUTEXPR_NOT_HOLDER</span></a> := 126%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_ORIGINAL_NOT_HOLDER"><span class="id" title="definition">OS_ERR_ORIGINAL_NOT_HOLDER</span></a> := 127%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_MUTEX_WL_HIGHEST_PRIO"><span class="id" title="definition">OS_ERR_MUTEX_WL_HIGHEST_PRIO</span></a> := 128%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_PRIO_EXIST"><span class="id" title="definition">OS_PRIO_EXIST</span></a> := 40%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_PRIO_ERR"><span class="id" title="definition">OS_PRIO_ERR</span></a> := 41%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_PRIO_INVALID"><span class="id" title="definition">OS_PRIO_INVALID</span></a> := 42%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_NEST"><span class="id" title="definition">OS_ERR_NEST</span></a>:= 1000%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_MUTEX_DEADLOCK"><span class="id" title="definition">OS_ERR_MUTEX_DEADLOCK</span></a> := 1001%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_MUTEX_IDLE"><span class="id" title="definition">OS_ERR_MUTEX_IDLE</span></a> := 1002%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_SEM_OVF"><span class="id" title="definition">OS_SEM_OVF</span></a> := 50%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_TASK_DEL_ERR"><span class="id" title="definition">OS_TASK_DEL_ERR</span></a> := 60%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_TASK_DEL_IDLE"><span class="id" title="definition">OS_TASK_DEL_IDLE</span></a> := 61%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_TASK_DEL_ISR"><span class="id" title="definition">OS_TASK_DEL_ISR</span></a> := 63%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_NO_MORE_TCB"><span class="id" title="definition">OS_NO_MORE_TCB</span></a> := 70%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_ERR_DEL_ISR"><span class="id" title="definition">OS_ERR_DEL_ISR</span></a> := 140%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_VERSION"><span class="id" title="definition">OS_VERSION</span></a> := 252%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_MUTEX_KEEP_LOWER_8"><span class="id" title="definition">OS_MUTEX_KEEP_LOWER_8</span></a> := 255%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_MUTEX_KEEP_UPPER_8"><span class="id" title="definition">OS_MUTEX_KEEP_UPPER_8</span></a> := 65280%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_MUTEX_AVAILABLE"><span class="id" title="definition">OS_MUTEX_AVAILABLE</span></a> := 255%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS_PrioChange"><span class="id" title="definition">OS_PrioChange</span></a> := 400%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSInit"><span class="id" title="definition">OSInit</span></a> := 253%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSStart"><span class="id" title="definition">OSStart</span></a> := 254%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSIntEnter"><span class="id" title="definition">OSIntEnter</span></a> := 255%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSVersion"><span class="id" title="definition">OSVersion</span></a> := 256%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQAccept"><span class="id" title="definition">OSQAccept</span></a> := 257%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQCreate"><span class="id" title="definition">OSQCreate</span></a> := 258%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQDel"><span class="id" title="definition">OSQDel</span></a> := 259%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQPend"><span class="id" title="definition">OSQPend</span></a> := 260%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQGetMsg"><span class="id" title="definition">OSQGetMsg</span></a> := 261%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSQPost"><span class="id" title="definition">OSQPost</span></a> := 262%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSSemAccept"><span class="id" title="definition">OSSemAccept</span></a> := 263%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSSemCreate"><span class="id" title="definition">OSSemCreate</span></a> := 264%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSSemDel"><span class="id" title="definition">OSSemDel</span></a> := 265%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSSemPend"><span class="id" title="definition">OSSemPend</span></a> := 266%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTaskDel"><span class="id" title="definition">OSTaskDel</span></a> := 267%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTimeDly"><span class="id" title="definition">OSTimeDly</span></a> := 268%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTimeGet"><span class="id" title="definition">OSTimeGet</span></a> := 269%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSSemPost"><span class="id" title="definition">OSSemPost</span></a> := 270%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMboxCreate"><span class="id" title="definition">OSMboxCreate</span></a> := 271%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMboxDel"><span class="id" title="definition">OSMboxDel</span></a> := 272%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMboxPend"><span class="id" title="definition">OSMboxPend</span></a> := 273%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMboxPost"><span class="id" title="definition">OSMboxPost</span></a> := 274%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMboxAccept"><span class="id" title="definition">OSMboxAccept</span></a> := 275%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMutexCreate"><span class="id" title="definition">OSMutexCreate</span></a> := 276%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMutexDel"><span class="id" title="definition">OSMutexDel</span></a> := 277%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMutexPend"><span class="id" title="definition">OSMutexPend</span></a> := 278%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMutexPost"><span class="id" title="definition">OSMutexPost</span></a> := 279%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSMutexAccept"><span class="id" title="definition">OSMutexAccept</span></a> := 280%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSTickISR"><span class="id" title="definition">OSTickISR</span></a> := 0.<br/>
+<span class="id" title="keyword">Definition</span> <a name="OSToyISR"><span class="id" title="definition">OSToyISR</span></a> := 1.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="SOME_P_NOT_LEGAL_ERR"><span class="id" title="definition">SOME_P_NOT_LEGAL_ERR</span></a>     := 1312%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_DEL_NULL_ERR"><span class="id" title="definition">MBOX_DEL_NULL_ERR</span></a>        := <a class="idref" href="os_code_defs.html#OS_ERR_PEVENT_NULL"><span class="id" title="definition">OS_ERR_PEVENT_NULL</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_DEL_P_NOT_LEGAL_ERR"><span class="id" title="definition">MBOX_DEL_P_NOT_LEGAL_ERR</span></a> := <a class="idref" href="os_code_defs.html#SOME_P_NOT_LEGAL_ERR"><span class="id" title="definition">SOME_P_NOT_LEGAL_ERR</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_DEL_WRONG_TYPE_ERR"><span class="id" title="definition">MBOX_DEL_WRONG_TYPE_ERR</span></a>  := <a class="idref" href="os_code_defs.html#OS_ERR_EVENT_TYPE"><span class="id" title="definition">OS_ERR_EVENT_TYPE</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_DEL_TASK_WAITING_ERR"><span class="id" title="definition">MBOX_DEL_TASK_WAITING_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_ERR_TASK_WAITING"><span class="id" title="definition">OS_ERR_TASK_WAITING</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_DEL_SUCC"><span class="id" title="definition">MBOX_DEL_SUCC</span></a>       := <a class="idref" href="os_code_defs.html#OS_NO_ERR"><span class="id" title="definition">OS_NO_ERR</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_POST_NULL_ERR"><span class="id" title="definition">MBOX_POST_NULL_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_ERR_PEVENT_NULL"><span class="id" title="definition">OS_ERR_PEVENT_NULL</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_POST_MSG_NULL_ERR"><span class="id" title="definition">MBOX_POST_MSG_NULL_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_ERR_POST_NULL_PTR"><span class="id" title="definition">OS_ERR_POST_NULL_PTR</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_POST_P_NOT_LEGAL_ERR"><span class="id" title="definition">MBOX_POST_P_NOT_LEGAL_ERR</span></a> := <a class="idref" href="os_code_defs.html#SOME_P_NOT_LEGAL_ERR"><span class="id" title="definition">SOME_P_NOT_LEGAL_ERR</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_POST_WRONG_TYPE_ERR"><span class="id" title="definition">MBOX_POST_WRONG_TYPE_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_ERR_EVENT_TYPE"><span class="id" title="definition">OS_ERR_EVENT_TYPE</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_POST_TASK_WT_ERR"><span class="id" title="definition">MBOX_POST_TASK_WT_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_ERR_TASK_WAITING"><span class="id" title="definition">OS_ERR_TASK_WAITING</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_POST_FULL_ERR"><span class="id" title="definition">MBOX_POST_FULL_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_Q_FULL"><span class="id" title="definition">OS_Q_FULL</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_POST_SUCC"><span class="id" title="definition">MBOX_POST_SUCC</span></a> := <a class="idref" href="os_code_defs.html#OS_NO_ERR"><span class="id" title="definition">OS_NO_ERR</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_PEND_NULL_ERR"><span class="id" title="definition">MBOX_PEND_NULL_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_ERR_PEVENT_NULL"><span class="id" title="definition">OS_ERR_PEVENT_NULL</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_PEND_P_NOT_LEGAL_ERR"><span class="id" title="definition">MBOX_PEND_P_NOT_LEGAL_ERR</span></a> := <a class="idref" href="os_code_defs.html#SOME_P_NOT_LEGAL_ERR"><span class="id" title="definition">SOME_P_NOT_LEGAL_ERR</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_PEND_WRONG_TYPE_ERR"><span class="id" title="definition">MBOX_PEND_WRONG_TYPE_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_ERR_EVENT_TYPE"><span class="id" title="definition">OS_ERR_EVENT_TYPE</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_PEND_FROM_IDLE_ERR"><span class="id" title="definition">MBOX_PEND_FROM_IDLE_ERR</span></a> := 1313%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_PEND_NOT_READY_ERR"><span class="id" title="definition">MBOX_PEND_NOT_READY_ERR</span></a> := 1314%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_PEND_TIMEOUT_ERR"><span class="id" title="definition">MBOX_PEND_TIMEOUT_ERR</span></a> := <a class="idref" href="os_code_defs.html#OS_TIMEOUT"><span class="id" title="definition">OS_TIMEOUT</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="MBOX_PEND_SUCC"><span class="id" title="definition">MBOX_PEND_SUCC</span></a> := <a class="idref" href="os_code_defs.html#OS_NO_ERR"><span class="id" title="definition">OS_NO_ERR</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

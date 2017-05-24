@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>can_change_aop_proof</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library can_change_aop_proof</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="include.html#"><span class="id" title="library">include</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="memory.html#"><span class="id" title="library">memory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="memdata.html#"><span class="id" title="library">memdata</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="assertion.html#"><span class="id" title="library">assertion</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="absop.html#"><span class="id" title="library">absop</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="simulation.html#"><span class="id" title="library">simulation</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="language.html#"><span class="id" title="library">language</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="opsem.html#"><span class="id" title="library">opsem</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_program.html#"><span class="id" title="library">os_program</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_spec.html#"><span class="id" title="library">os_spec</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="inferules.html#"><span class="id" title="library">inferules</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_notations.html#"><span class="id" title="library">os_code_notations</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_defs.html#"><span class="id" title="library">os_code_defs</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_ucos_h.html#"><span class="id" title="library">os_ucos_h</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_time.html#"><span class="id" title="library">os_time</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="baseTac.html#"><span class="id" title="library">baseTac</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="auxdef.html#"><span class="id" title="library">auxdef</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="seplog_lemmas.html#"><span class="id" title="library">seplog_lemmas</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="seplog_tactics.html#"><span class="id" title="library">seplog_tactics</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="derivedrules.html#"><span class="id" title="library">derivedrules</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="hoare_conseq.html#"><span class="id" title="library">hoare_conseq</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="symbolic_execution.html#"><span class="id" title="library">symbolic_execution</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="hoare_assign.html#"><span class="id" title="library">hoare_assign</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="hoare_lemmas.html#"><span class="id" title="library">hoare_lemmas</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="BaseAsrtDef.html#"><span class="id" title="library">BaseAsrtDef</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="inv_prop.html#"><span class="id" title="library">inv_prop</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="InternalFunSpec.html#"><span class="id" title="library">InternalFunSpec</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="IntLib.html#"><span class="id" title="library">IntLib</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#"><span class="id" title="library">List</span></a>.<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_ptrmapsto"><span class="id" title="lemma">can_change_aop_ptrmapsto</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">l</span> <span class="id" title="var">t</span> <span class="id" title="var">v</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="assertion.html#d041bdd6b56e9ec7380d205f080b737a"><span class="id" title="notation">PV</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="assertion.html#d041bdd6b56e9ec7380d205f080b737a"><span class="id" title="notation">@</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="assertion.html#d041bdd6b56e9ec7380d205f080b737a"><span class="id" title="notation">|-&gt;</span></a> <a class="idref" href="can_change_aop_proof.html#v"><span class="id" title="variable">v</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_lvarenv"><span class="id" title="lemma">can_change_aop_lvarenv</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">t</span> <span class="id" title="var">a</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="assertion.html#ed1cc1882c0ef65e1820550638d8aa52"><span class="id" title="notation">L</span></a><a class="idref" href="assertion.html#ed1cc1882c0ef65e1820550638d8aa52"><span class="id" title="notation">&amp;</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="assertion.html#ed1cc1882c0ef65e1820550638d8aa52"><span class="id" title="notation">@</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="assertion.html#ed1cc1882c0ef65e1820550638d8aa52"><span class="id" title="notation">==</span></a> <a class="idref" href="can_change_aop_proof.html#a"><span class="id" title="variable">a</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_gvarenv"><span class="id" title="lemma">can_change_aop_gvarenv</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">t</span> <span class="id" title="var">a</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="assertion.html#faa481a50d32e0b1f93bf08ebb291fe9"><span class="id" title="notation">G</span></a><a class="idref" href="assertion.html#faa481a50d32e0b1f93bf08ebb291fe9"><span class="id" title="notation">&amp;</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="assertion.html#faa481a50d32e0b1f93bf08ebb291fe9"><span class="id" title="notation">@</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="assertion.html#faa481a50d32e0b1f93bf08ebb291fe9"><span class="id" title="notation">==</span></a> <a class="idref" href="can_change_aop_proof.html#a"><span class="id" title="variable">a</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_ptrmapsto"><span class="id" title="lemma">can_change_aop_ptrmapsto</span></a> <a class="idref" href="can_change_aop_proof.html#can_change_aop_lvarenv"><span class="id" title="lemma">can_change_aop_lvarenv</span></a> <a class="idref" href="can_change_aop_proof.html#can_change_aop_gvarenv"><span class="id" title="lemma">can_change_aop_gvarenv</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_lvarmapsto"><span class="id" title="lemma">can_change_aop_lvarmapsto</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">t</span> <span class="id" title="var">v</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="assertion.html#8a0affd660ef3688dc5b9f37003eafdc"><span class="id" title="notation">LV</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="assertion.html#8a0affd660ef3688dc5b9f37003eafdc"><span class="id" title="notation">@</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="assertion.html#8a0affd660ef3688dc5b9f37003eafdc"><span class="id" title="notation">|-&gt;</span></a> <a class="idref" href="can_change_aop_proof.html#v"><span class="id" title="variable">v</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_gvarmapsto"><span class="id" title="lemma">can_change_aop_gvarmapsto</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">t</span> <span class="id" title="var">v</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="assertion.html#b3394988e00c11339c5cf7b11ea808f4"><span class="id" title="notation">GV</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="assertion.html#b3394988e00c11339c5cf7b11ea808f4"><span class="id" title="notation">@</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="assertion.html#b3394988e00c11339c5cf7b11ea808f4"><span class="id" title="notation">|-&gt;</span></a> <a class="idref" href="can_change_aop_proof.html#v"><span class="id" title="variable">v</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_lvarmapsto"><span class="id" title="lemma">can_change_aop_lvarmapsto</span></a> <a class="idref" href="can_change_aop_proof.html#can_change_aop_gvarmapsto"><span class="id" title="lemma">can_change_aop_gvarmapsto</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_ptrarray&acute;"><span class="id" title="lemma">can_change_aop_ptrarray&acute;</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">l</span> <span class="id" title="var">n</span> <span class="id" title="var">t</span> <span class="id" title="var">vl</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#Aarray&acute;"><span class="id" title="definition">Aarray&acute;</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#n"><span class="id" title="variable">n</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="can_change_aop_proof.html#vl"><span class="id" title="variable">vl</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_ptrarray&acute;"><span class="id" title="lemma">can_change_aop_ptrarray&acute;</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_ptrarray"><span class="id" title="lemma">can_change_aop_ptrarray</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">l</span> <span class="id" title="var">t</span> <span class="id" title="var">vl</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#Aarray"><span class="id" title="definition">Aarray</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="can_change_aop_proof.html#vl"><span class="id" title="variable">vl</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_ptrarray"><span class="id" title="lemma">can_change_aop_ptrarray</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_lvararray"><span class="id" title="lemma">can_change_aop_lvararray</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">t</span> <span class="id" title="var">vl</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#LAarray"><span class="id" title="definition">LAarray</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="can_change_aop_proof.html#vl"><span class="id" title="variable">vl</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_gvararray"><span class="id" title="lemma">can_change_aop_gvararray</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">t</span> <span class="id" title="var">vl</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#GAarray"><span class="id" title="definition">GAarray</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="can_change_aop_proof.html#vl"><span class="id" title="variable">vl</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_lvararray"><span class="id" title="lemma">can_change_aop_lvararray</span></a> <a class="idref" href="can_change_aop_proof.html#can_change_aop_gvararray"><span class="id" title="lemma">can_change_aop_gvararray</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_struct&acute;"><span class="id" title="lemma">can_change_aop_struct&acute;</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">l</span> <span class="id" title="var">dls</span> <span class="id" title="var">ls</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#Astruct&acute;"><span class="id" title="definition">Astruct&acute;</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#dls"><span class="id" title="variable">dls</span></a> <a class="idref" href="can_change_aop_proof.html#ls"><span class="id" title="variable">ls</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_struct&acute;"><span class="id" title="lemma">can_change_aop_struct&acute;</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_struct"><span class="id" title="lemma">can_change_aop_struct</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">l</span> <span class="id" title="var">t</span> <span class="id" title="var">ls</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#Astruct"><span class="id" title="definition">Astruct</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="can_change_aop_proof.html#ls"><span class="id" title="variable">ls</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_struct"><span class="id" title="lemma">can_change_aop_struct</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">can_change_aop_solver</span> ::=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">unfold</span> <a class="idref" href="OSQInvDef.html#OSInv"><span class="id" title="definition">OSInv</span></a>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">unfold</span> <a class="idref" href="OSQInvDef.html#AOSEventFreeList"><span class="id" title="definition">AOSEventFreeList</span></a>, <a class="idref" href="OSQInvDef.html#AOSQFreeList"><span class="id" title="definition">AOSQFreeList</span></a>, <a class="idref" href="OSQInvDef.html#AOSQFreeBlk"><span class="id" title="definition">AOSQFreeBlk</span></a>, <a class="idref" href="OSQInvDef.html#AECBList"><span class="id" title="definition">AECBList</span></a>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">unfold</span> <a class="idref" href="OSTCBInvDef.html#AOSMapTbl"><span class="id" title="definition">AOSMapTbl</span></a>, <a class="idref" href="OSTCBInvDef.html#AOSUnMapTbl"><span class="id" title="definition">AOSUnMapTbl</span></a>, <a class="idref" href="OSTCBInvDef.html#AOSTCBPrioTbl"><span class="id" title="definition">AOSTCBPrioTbl</span></a>, <a class="idref" href="OSTCBInvDef.html#AOSIntNesting"><span class="id" title="definition">AOSIntNesting</span></a>, <a class="idref" href="OSTCBInvDef.html#AOSTCBList"><span class="id" title="definition">AOSTCBList</span></a>, <a class="idref" href="OSTCBInvDef.html#AOSTCBFreeList"><span class="id" title="definition">AOSTCBFreeList</span></a>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">unfold</span> <a class="idref" href="OSTCBInvDef.html#AOSRdyTblGrp"><span class="id" title="definition">AOSRdyTblGrp</span></a>, <a class="idref" href="OSTCBInvDef.html#AOSRdyTbl"><span class="id" title="definition">AOSRdyTbl</span></a>, <a class="idref" href="OSTCBInvDef.html#AOSRdyGrp"><span class="id" title="definition">AOSRdyGrp</span></a>, <a class="idref" href="OSTCBInvDef.html#AOSTime"><span class="id" title="definition">AOSTime</span></a>, <a class="idref" href="OSTCBInvDef.html#AGVars"><span class="id" title="definition">AGVars</span></a>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">unfold</span> <a class="idref" href="OSQInvDef.html#AOSEvent"><span class="id" title="definition">AOSEvent</span></a>, <a class="idref" href="OSQInvDef.html#AOSEventTbl"><span class="id" title="definition">AOSEventTbl</span></a>, <a class="idref" href="OSQInvDef.html#AMsgData"><span class="id" title="definition">AMsgData</span></a>, <a class="idref" href="OSQInvDef.html#AOSQCtr"><span class="id" title="definition">AOSQCtr</span></a>, <a class="idref" href="OSQInvDef.html#AOSQBlk"><span class="id" title="definition">AOSQBlk</span></a>, <a class="idref" href="BaseAsrtDef.html#node"><span class="id" title="definition">node</span></a>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a>; <span class="id" title="tactic">fold</span> <a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a>; <span class="id" title="tactic">intuition</span> <span class="id" title="tactic">auto</span> 1 <span class="id" title="keyword">with</span> <span class="id" title="var">can_change_aop</span>;<span class="id" title="tactic">simpl</span>;<span class="id" title="tactic">intros</span>;  <span class="id" title="tactic">intuition</span> <span class="id" title="tactic">auto</span> 1 <span class="id" title="keyword">with</span> <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_sllseg"><span class="id" title="lemma">can_change_aop_sllseg</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span>  <span class="id" title="var">h</span> <span class="id" title="var">tn</span> <span class="id" title="var">t</span> <span class="id" title="var">l</span> <span class="id" title="var">next</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#sllseg"><span class="id" title="definition">sllseg</span></a>  <a class="idref" href="can_change_aop_proof.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="can_change_aop_proof.html#tn"><span class="id" title="variable">tn</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="can_change_aop_proof.html#next"><span class="id" title="variable">next</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_sllseg"><span class="id" title="lemma">can_change_aop_sllseg</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_node"><span class="id" title="lemma">can_change_aop_node</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">v</span> <span class="id" title="var">T</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#node"><span class="id" title="definition">node</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="can_change_aop_proof.html#v"><span class="id" title="variable">v</span></a> <a class="idref" href="can_change_aop_proof.html#T"><span class="id" title="variable">T</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_node"><span class="id" title="lemma">can_change_aop_node</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_msgq"><span class="id" title="lemma">can_change_aop_msgq</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">e</span> <span class="id" title="var">f</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#AMsgData"><span class="id" title="definition">AMsgData</span></a> <a class="idref" href="can_change_aop_proof.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="can_change_aop_proof.html#d"><span class="id" title="variable">d</span></a> <a class="idref" href="can_change_aop_proof.html#e"><span class="id" title="variable">e</span></a> <a class="idref" href="can_change_aop_proof.html#f"><span class="id" title="variable">f</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_msgq"><span class="id" title="lemma">can_change_aop_msgq</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_aevtdata"><span class="id" title="lemma">can_change_aop_aevtdata</span></a>:<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">vl</span> <span class="id" title="var">d</span> , <a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#AEventData"><span class="id" title="definition">AEventData</span></a> <a class="idref" href="can_change_aop_proof.html#vl"><span class="id" title="variable">vl</span></a> <a class="idref" href="can_change_aop_proof.html#d"><span class="id" title="variable">d</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_aevtdata"><span class="id" title="lemma">can_change_aop_aevtdata</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_msgqnode"><span class="id" title="lemma">can_change_aop_msgqnode</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">l</span> <span class="id" title="var">vl</span> <span class="id" title="var">d</span> <span class="id" title="var">c</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#AEventNode"><span class="id" title="definition">AEventNode</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#vl"><span class="id" title="variable">vl</span></a> <a class="idref" href="can_change_aop_proof.html#d"><span class="id" title="variable">d</span></a> <a class="idref" href="can_change_aop_proof.html#c"><span class="id" title="variable">c</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_msgqnode"><span class="id" title="lemma">can_change_aop_msgqnode</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_msgqllseg"><span class="id" title="lemma">can_change_aop_msgqllseg</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">h</span> <span class="id" title="var">tn</span> <span class="id" title="var">l</span> <span class="id" title="var">msgqls</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#evsllseg"><span class="id" title="definition">evsllseg</span></a> <a class="idref" href="can_change_aop_proof.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="can_change_aop_proof.html#tn"><span class="id" title="variable">tn</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#msgqls"><span class="id" title="variable">msgqls</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_msgqllseg"><span class="id" title="lemma">can_change_aop_msgqllseg</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_sll"><span class="id" title="lemma">can_change_aop_sll</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">h</span> <span class="id" title="var">l</span> <span class="id" title="var">tp</span>  <span class="id" title="var">next</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#sll"><span class="id" title="definition">sll</span></a> <a class="idref" href="can_change_aop_proof.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#tp"><span class="id" title="variable">tp</span></a>  <a class="idref" href="can_change_aop_proof.html#next"><span class="id" title="variable">next</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_sll"><span class="id" title="lemma">can_change_aop_sll</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_dllseg"><span class="id" title="lemma">can_change_aop_dllseg</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">h</span> <span class="id" title="var">hp</span> <span class="id" title="var">t</span> <span class="id" title="var">tn</span> <span class="id" title="var">l</span> <span class="id" title="var">tp</span> <span class="id" title="var">pre</span> <span class="id" title="var">next</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="BaseAsrtDef.html#dllseg"><span class="id" title="definition">dllseg</span></a> <a class="idref" href="can_change_aop_proof.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="can_change_aop_proof.html#hp"><span class="id" title="variable">hp</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="can_change_aop_proof.html#tn"><span class="id" title="variable">tn</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="can_change_aop_proof.html#tp"><span class="id" title="variable">tp</span></a> <a class="idref" href="can_change_aop_proof.html#pre"><span class="id" title="variable">pre</span></a> <a class="idref" href="can_change_aop_proof.html#next"><span class="id" title="variable">next</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_dllseg"><span class="id" title="lemma">can_change_aop_dllseg</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_tcbdllseg"><span class="id" title="lemma">can_change_aop_tcbdllseg</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">h</span> <span class="id" title="var">hp</span> <span class="id" title="var">t</span> <span class="id" title="var">tn</span> <span class="id" title="var">l</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSTCBInvDef.html#tcbdllseg"><span class="id" title="definition">tcbdllseg</span></a> <a class="idref" href="can_change_aop_proof.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="can_change_aop_proof.html#hp"><span class="id" title="variable">hp</span></a> <a class="idref" href="can_change_aop_proof.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="can_change_aop_proof.html#tn"><span class="id" title="variable">tn</span></a> <a class="idref" href="can_change_aop_proof.html#l"><span class="id" title="variable">l</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_tcbdllseg"><span class="id" title="lemma">can_change_aop_tcbdllseg</span></a> : <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span>    <a name="can_change_aop_ecbfsllseg"><span class="id" title="lemma">can_change_aop_ecbfsllseg</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">ls</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#ecbf_sllseg"><span class="id" title="definition">ecbf_sllseg</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="can_change_aop_proof.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="can_change_aop_proof.html#ls"><span class="id" title="variable">ls</span></a> <a class="idref" href="os_ucos_h.html#OS_EVENT"><span class="id" title="definition">OS_EVENT</span></a> <a class="idref" href="OSQInvDef.html#V_OSEventListPtr"><span class="id" title="definition">V_OSEventListPtr</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_ecbfsllseg"><span class="id" title="lemma">can_change_aop_ecbfsllseg</span></a>: <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span>    <a name="can_change_aop_ecbfsll"><span class="id" title="lemma">can_change_aop_ecbfsll</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">ls</span> <span class="id" title="var">x</span> , <a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#ecbf_sll"><span class="id" title="definition">ecbf_sll</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="can_change_aop_proof.html#ls"><span class="id" title="variable">ls</span></a> <a class="idref" href="os_ucos_h.html#OS_EVENT"><span class="id" title="definition">OS_EVENT</span></a> <a class="idref" href="OSQInvDef.html#V_OSEventListPtr"><span class="id" title="definition">V_OSEventListPtr</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_ecbfsll"><span class="id" title="lemma">can_change_aop_ecbfsll</span></a>: <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span>  <a name="can_change_aop_qblkfseg"><span class="id" title="lemma">can_change_aop_qblkfseg</span></a> :<br/>
+<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">ls</span>, <a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#qblkf_sllseg"><span class="id" title="definition">qblkf_sllseg</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="can_change_aop_proof.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="can_change_aop_proof.html#ls"><span class="id" title="variable">ls</span></a> <a class="idref" href="os_ucos_h.html#OS_Q_FREEBLK"><span class="id" title="definition">OS_Q_FREEBLK</span></a> <a class="idref" href="OSQInvDef.html#V_nextblk"><span class="id" title="definition">V_nextblk</span></a>).<br/>
+ 
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_qblkfseg"><span class="id" title="lemma">can_change_aop_qblkfseg</span></a>: <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span>  <a name="can_change_aop_qblkf"><span class="id" title="lemma">can_change_aop_qblkf</span></a> :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">ls</span>, <a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> (<a class="idref" href="OSQInvDef.html#qblkf_sll"><span class="id" title="definition">qblkf_sll</span></a> <a class="idref" href="can_change_aop_proof.html#x"><span class="id" title="variable">x</span></a>  <a class="idref" href="can_change_aop_proof.html#ls"><span class="id" title="variable">ls</span></a> <a class="idref" href="os_ucos_h.html#OS_Q_FREEBLK"><span class="id" title="definition">OS_Q_FREEBLK</span></a> <a class="idref" href="OSQInvDef.html#V_nextblk"><span class="id" title="definition">V_nextblk</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Resolve</span> <a class="idref" href="can_change_aop_proof.html#can_change_aop_qblkf"><span class="id" title="lemma">can_change_aop_qblkf</span></a>: <span class="id" title="var">can_change_aop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="can_change_aop_OSQInv"><span class="id" title="lemma">can_change_aop_OSQInv</span></a> :<br/>
+&nbsp;&nbsp;<a class="idref" href="assertion.html#can_change_aop"><span class="id" title="definition">can_change_aop</span></a> <a class="idref" href="OSQInvDef.html#OSInv"><span class="id" title="definition">OSInv</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

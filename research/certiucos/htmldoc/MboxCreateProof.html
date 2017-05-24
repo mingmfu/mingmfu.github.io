@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>MboxCreateProof</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library MboxCreateProof</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="include.html#"><span class="id" title="library">include</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="memory.html#"><span class="id" title="library">memory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="memdata.html#"><span class="id" title="library">memdata</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.Natural.Peano.NPeano.html#"><span class="id" title="library">NPeano</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_defs.html#"><span class="id" title="library">os_code_defs</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_notations.html#"><span class="id" title="library">os_code_notations</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_ucos_h.html#"><span class="id" title="library">os_ucos_h</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ucert.html#"><span class="id" title="library">ucert</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="OSQCreatePure.html#"><span class="id" title="library">OSQCreatePure</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="os_code_notations.html#"><span class="id" title="library">os_code_notations</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#"><span class="id" title="library">List</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="MboxCreatePure.html#"><span class="id" title="library">MboxCreatePure</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">code_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="MboxCreateProof"><span class="id" title="lemma">MboxCreateProof</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span>  <span class="id" title="var">vl</span> <span class="id" title="var">p</span> <span class="id" title="var">r</span>, <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="MboxCreateProof.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="auxdef.html#BuildPreA&acute;"><span class="id" title="definition">BuildPreA&acute;</span></a> <a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMboxCreate"><span class="id" title="definition">OSMboxCreate</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="absop.html#mbox_createapi"><span class="id" title="definition">mbox_createapi</span></a> <a class="idref" href="MboxCreateProof.html#vl"><span class="id" title="variable">vl</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="MboxCreateProof.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="auxdef.html#BuildRetA&acute;"><span class="id" title="definition">BuildRetA&acute;</span></a> <a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMboxCreate"><span class="id" title="definition">OSMboxCreate</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="absop.html#mbox_createapi"><span class="id" title="definition">mbox_createapi</span></a> <a class="idref" href="MboxCreateProof.html#vl"><span class="id" title="variable">vl</span></a> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="LibTactics.html#645ed6754f9d4452ad12f0d16c808957"><span class="id" title="notation">exists</span></a> <span class="id" title="var">t</span> <span class="id" title="var">d1</span> <span class="id" title="var">d2</span> <span class="id" title="var">s</span><a class="idref" href="LibTactics.html#645ed6754f9d4452ad12f0d16c808957"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="os_program.html#os_api"><span class="id" title="definition">os_api</span></a> <a class="idref" href="os_code_defs.html#OSMboxCreate"><span class="id" title="definition">OSMboxCreate</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">t</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">d1</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">d2</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">s</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">/\</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{|</span></a><a class="idref" href="InternalFunSpec.html#OSQ_spec"><span class="id" title="definition">OSQ_spec</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="absop.html#GetHPrio"><span class="id" title="definition">GetHPrio</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a>  <a class="idref" href="inv_prop.html#I"><span class="id" title="definition">I</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="MboxCreateProof.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">,</span></a> <a class="idref" href="assertion.html#Afalse"><span class="id" title="constructor">Afalse</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">|}|-</span></a> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{{</span></a><a class="idref" href="MboxCreateProof.html#p"><span class="id" title="variable">p</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">}}</span></a><span class="id" title="var">s</span> <a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">{{</span></a><a class="idref" href="assertion.html#Afalse"><span class="id" title="constructor">Afalse</span></a><a class="idref" href="inferules.html#d458f999c042c47071f9e33064728144"><span class="id" title="notation">}}</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
