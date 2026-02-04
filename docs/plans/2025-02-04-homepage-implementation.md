@@ -1,3 +1,501 @@
+# Academic Homepage Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+
+**Goal:** Redesign Dr. Ming Fu's academic homepage with modern, professional styling befitting a research director
+
+**Architecture:** Single-page static site with semantic HTML5, modern CSS3 using CSS Grid/Flexbox, mobile-first responsive design
+
+**Tech Stack:** HTML5, CSS3 (no frameworks), system fonts, static files only
+
+---
+
+## Task 1: Create New CSS File Structure
+
+**Files:**
+- Create: `css/styles.css`
+- Delete: `stylesheet.css` (will be replaced)
+
+**Step 1: Create CSS directory and base file**
+
+```bash
+mkdir -p css
+```
+
+**Step 2: Write CSS foundation**
+
+Create `css/styles.css` with:
+- CSS custom properties (variables) for colors
+- CSS reset and base styles
+- Typography system
+- Layout utilities
+
+```css
+/* CSS Custom Properties */
+:root {
+  /* Colors */
+  --color-primary: #1a365d;
+  --color-secondary: #4a5568;
+  --color-accent: #d69e2e;
+  --color-bg: #ffffff;
+  --color-bg-alt: #f7fafc;
+  --color-text: #2d3748;
+  --color-text-light: #718096;
+  --color-border: #e2e8f0;
+  
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  
+  /* Layout */
+  --max-width: 900px;
+  --border-radius: 8px;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base */
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-primary);
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; margin-top: var(--space-2xl); margin-bottom: var(--space-lg); }
+h3 { font-size: 1.25rem; }
+
+p {
+  margin-bottom: var(--space-md);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+/* Layout */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+section {
+  padding: var(--space-xl) 0;
+}
+
+/* Utilities */
+.text-muted { color: var(--color-text-light); }
+.font-mono { font-family: var(--font-mono); }
+```
+
+**Step 3: Verify file created**
+
+```bash
+ls -la css/
+cat css/styles.css | head -20
+```
+
+**Step 4: Commit**
+
+```bash
+git add css/
+git commit -m "feat: add CSS foundation with design system"
+```
+
+---
+
+## Task 2: Create Header/Hero Section Styles
+
+**Files:**
+- Modify: `css/styles.css` (append styles)
+
+**Step 1: Add header styles**
+
+Append to `css/styles.css`:
+
+```css
+/* Header / Hero Section */
+.hero {
+  padding: var(--space-2xl) 0;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.hero-photo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-border);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hero-info h1 {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-sm);
+  color: var(--color-primary);
+}
+
+.hero-title {
+  font-size: 1.125rem;
+  color: var(--color-secondary);
+  margin-bottom: var(--space-md);
+  font-weight: 500;
+}
+
+.hero-affiliation {
+  font-size: 1rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-md);
+}
+
+.hero-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  font-size: 0.95rem;
+}
+
+.hero-contact span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.hero-links {
+  margin-top: var(--space-md);
+  display: flex;
+  gap: var(--space-md);
+}
+
+.hero-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-bg-alt);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.hero-links a:hover {
+  background-color: var(--color-primary);
+  color: white;
+  text-decoration: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .hero-photo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+  }
+  
+  .hero-info h1 {
+    font-size: 2rem;
+  }
+  
+  .hero-contact {
+    justify-content: center;
+  }
+  
+  .hero-links {
+    justify-content: center;
+  }
+}
+```
+
+**Step 2: Verify styles added**
+
+```bash
+grep -A 5 "Hero Section" css/styles.css
+```
+
+**Step 3: Commit**
+
+```bash
+git add css/styles.css
+git commit -m "feat: add hero section styles"
+```
+
+---
+
+## Task 3: Create About/Research Section Styles
+
+**Files:**
+- Modify: `css/styles.css` (append styles)
+
+**Step 1: Add about section styles**
+
+Append to `css/styles.css`:
+
+```css
+/* About / Research Section */
+.about {
+  background-color: var(--color-bg-alt);
+}
+
+.about-content {
+  max-width: 800px;
+}
+
+.about-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: var(--space-lg);
+}
+
+.research-areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.research-tag {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-md);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+
+.research-tag:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+```
+
+**Step 2: Commit**
+
+```bash
+git add css/styles.css
+git commit -m "feat: add about section styles with research tags"
+```
+
+---
+
+## Task 4: Create Publications Section Styles
+
+**Files:**
+- Modify: `css/styles.css` (append styles)
+
+**Step 1: Add publications styles**
+
+Append to `css/styles.css`:
+
+```css
+/* Publications Section */
+.publications {
+  background-color: var(--color-bg);
+}
+
+.pub-year {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: var(--space-xl) 0 var(--space-md) 0;
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.pub-year:first-child {
+  margin-top: 0;
+}
+
+.pub-list {
+  list-style: none;
+  padding: 0;
+}
+
+.pub-item {
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pub-item:last-child {
+  border-bottom: none;
+}
+
+.pub-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+  line-height: 1.4;
+}
+
+.pub-title a {
+  color: var(--color-primary);
+}
+
+.pub-title a:hover {
+  color: var(--color-accent);
+}
+
+.pub-authors {
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-xs);
+}
+
+.pub-venue {
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  font-style: italic;
+}
+
+.pub-venue strong {
+  font-style: normal;
+  color: var(--color-primary);
+}
+
+.pub-award {
+  display: inline-block;
+  margin-left: var(--space-sm);
+  padding: 2px 8px;
+  background-color: var(--color-accent);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pub-links {
+  margin-top: var(--space-sm);
+  display: flex;
+  gap: var(--space-md);
+  font-size: 0.9rem;
+}
+
+.pub-links a {
+  color: var(--color-text-light);
+}
+
+.pub-links a:hover {
+  color: var(--color-accent);
+}
+```
+
+**Step 2: Commit**
+
+```bash
+git add css/styles.css
+git commit -m "feat: add publications section styles with awards"
+```
+
+---
+
+## Task 5: Create Footer Styles
+
+**Files:**
+- Modify: `css/styles.css` (append styles)
+
+**Step 1: Add footer styles**
+
+Append to `css/styles.css`:
+
+```css
+/* Footer */
+.footer {
+  background-color: var(--color-bg-alt);
+  padding: var(--space-xl) 0;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+.footer a {
+  color: var(--color-secondary);
+}
+
+.footer a:hover {
+  color: var(--color-accent);
+}
+```
+
+**Step 2: Commit**
+
+```bash
+git add css/styles.css
+git commit -m "feat: add footer styles"
+```
+
+---
+
+## Task 6: Create New HTML Structure
+
+**Files:**
+- Create: `index.html` (backup old one first)
+
+**Step 1: Backup old index**
+
+```bash
+cp index.html index.html.old
+```
+
+**Step 2: Write new HTML**
+
+Create new `index.html`:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -297,3 +795,118 @@
 
 </body>
 </html>
+```
+
+**Step 3: Verify new HTML**
+
+```bash
+head -30 index.html
+grep -c "pub-item" index.html
+```
+
+**Step 4: Commit**
+
+```bash
+git add index.html index.html.old
+git commit -m "feat: rewrite homepage with modern HTML5 structure"
+```
+
+---
+
+## Task 7: Remove Old Stylesheet
+
+**Files:**
+- Delete: `stylesheet.css`
+
+**Step 1: Remove old CSS**
+
+```bash
+rm stylesheet.css
+```
+
+**Step 2: Verify removal**
+
+```bash
+ls -la stylesheet.css 2>&1 || echo "File removed successfully"
+```
+
+**Step 3: Commit**
+
+```bash
+git rm stylesheet.css
+git commit -m "chore: remove old stylesheet (replaced by css/styles.css)"
+```
+
+---
+
+## Task 8: Test and Verify
+
+**Files:**
+- Test: `index.html` in browser or with validator
+
+**Step 1: Validate HTML structure**
+
+```bash
+# Check for basic HTML structure
+head -10 index.html
+tail -10 index.html
+```
+
+**Step 2: Verify all links work**
+
+```bash
+# Check paper links exist
+grep -o 'href="papers/[^"]*"' index.html | sort | uniq
+grep -o 'href="[^"]*\.pdf"' index.html | sort | uniq
+```
+
+**Step 3: Check CSS loads correctly**
+
+```bash
+grep "css/styles.css" index.html
+ls -la css/styles.css
+```
+
+**Step 4: Final verification**
+
+```bash
+# Count publication items
+pub_count=$(grep -c "pub-item" index.html)
+echo "Total publications: $pub_count"
+
+# Check for required sections
+echo "Checking sections:"
+grep -c "hero" index.html && echo "✓ Hero section"
+grep -c "about" index.html && echo "✓ About section"
+grep -c "publications" index.html && echo "✓ Publications section"
+grep -c "footer" index.html && echo "✓ Footer section"
+```
+
+**Step 5: Commit final changes**
+
+```bash
+git add -A
+git commit -m "feat: complete homepage redesign with modern styling"
+```
+
+---
+
+## Summary
+
+This implementation plan creates a modern, professional academic homepage with:
+
+1. **Clean, minimalist design** inspired by top-tier academic institutions
+2. **Mobile-first responsive layout** that works on all devices
+3. **Semantic HTML5** for accessibility and SEO
+4. **Modern CSS3** with CSS Grid, Flexbox, and custom properties
+5. **Organized publications** grouped by year with venue highlighting
+6. **Professional presentation** befitting a research director
+
+**Key improvements over old site:**
+- Modern HTML5/CSS3 (replaces HTML 4.01 table layout)
+- Responsive design (replaces fixed 860px width)
+- Clean typography and spacing
+- Visual hierarchy with proper sectioning
+- Award badges for distinguished papers
+- Better link organization with slides/talk links
+

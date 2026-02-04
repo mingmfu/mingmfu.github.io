@@ -1,0 +1,246 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Ming Fu's Homepage</title>
+    <meta name="keywords" content="Operating System, Multicore Concurrency, Formal Verification">
+    <link rel="stylesheet" href="stylesheet.css">
+  </head>
+ 
+  <body>
+  <table width="860"  border="0" align="center" cellspacing="10">
+  <tr>
+    <td>
+    <table border=0 cellpadding=0 cellspacing=0>
+    <tr>
+      <td>
+	<img src="ming.jpg" width=117 height=120>
+      </td>
+      <td>&nbsp &nbsp &nbsp &nbsp </td>
+      <td>
+        <h1>Dr. Ming Fu</h1>
+        Director of Huawei Fields Lab 
+ 	<br>
+	<br>   
+        <table border=0 cellpadding=0 cellspacing=0>
+          <tr>
+	    <td>
+	      <strong>Address: </strong> Hangzhou, China
+	    </td>
+	    <td>&nbsp &nbsp &nbsp &nbsp </td>
+	    <td>
+	     <strong>Email: </strong> ming.fu AT huawei DOT com<br>
+ 	    </td>
+          </tr> 
+        </table>
+      </td>
+    </tr>
+    </table>
+      <br><br>
+    </td>
+  </tr>
+ 
+
+ 
+  <!------------------------>
+  <!-- Research interests -->
+  <!------------------------>
+  <tr bgcolor="#e0e0e8">
+    <td><big><b>Research</b></big></td>
+  </tr>
+  <tr>
+    <td>
+      <p>
+       	I am interested in industry-oriented research on concurrency verification, weak memory consistency,
+	OS architecture, formal verification of OS. The goal is to build highly efficient and reliable OS rendering service and Web engine.
+       <p>
+	Here is my <a href="fuming-cv.pdf">CV</a>. 
+<br>
+<br>
+    </td>
+  </tr>
+
+
+  <!------------------------>
+  <!--    Publications    -->
+  <!------------------------>
+ 
+  <tr bgcolor="#e0e0e8">
+    <td><big><b>Selected Publications</b></big></td>
+  </tr>
+ 
+  <tr>
+    <td>
+<ol>	
+	<li>
+	<a href="https://dl.acm.org/doi/10.1145/3757377.3763965">StereoFG: Generating Stereo Frames from Centered Feature Stream</a><br>
+	Chenyu Zuo, Yazhen Yuan, Zhizhen Wu, Zhijian Liu, Jingzhen Lan, Ming Fu, Yuchi Huo, Rui Wang. <cite>
+	The 18th ACM SIGGRAPH Conference and Exhibition on Computer Graphics and Interactive Techniques in Asia 
+	(<b>SIGGRAPH Asia'25</b>)</cite>, December 16–18, 2025
+	<br>
+    <br>
+			
+	<li>
+	<a href="papers/osdi25-final255.pdf">OS Rendering Service Made Parallel with Out-of-Order Execution and In-Order Commit</a><br>
+	Yuanpei Wu, Dong Du, Chao Xu, Yubin Xia, Yang Yu, Ming Fu, Binyu Zang, Haibo Chen. <cite>The 19th USENIX Symposium on Operating Systems Design and Implementation (<b>OSDI'25</b>)</cite>, July 7–9, 2025
+	<br>
+    <br>
+		
+	<li>
+	<a href="papers/dvsync.pdf">D-VSync: Decoupled Rendering and Displaying for Smartphone Graphics</a><br>
+	Yuanpei Wu, Dong Du, Chao Xu, Yubin Xia, Ming Fu, Binyu Zang, Haibo Chen.  <cite>The 30th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (<b>ASPLOS'25</b>)</cite>, 
+	March, 2025.
+	<br>
+        <br>
+	
+	<li>
+	<a href="papers/btrace.pdf">Enabling Efficient Mobile Tracing with BTrace</a><br>
+	Jiawei Wang, Nian Liu, Arnau Casadevall-Saiz, Yutao Liu, Diogo Behrens, Ming Fu, Ning Jia, Hermann Härtig, and Haibo Chen. <cite>The 30th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (<b>ASPLOS'25</b>)</cite>, 
+	March, 2025.
+	<br>
+        <br>
+	
+	<li>
+	<a href="papers/osdi23_bwos.pdf">BWoS: Formally Verified Block-based Work Stealing for Parallel Processing</a><br>
+	Jiawei Wang, Bohdan Trach, Ming Fu*, Diogo Behrens, Jonathan Schwender, Yutao Liu, Jitang Lei, Viktor Vafeiadis,
+	Hermann Härtig and Haibo Chen. (<a href="papers/osdi23_bwos_slides.pdf">Slides</a>) <cite>The 17th USENIX Symposium on Operating Systems Design and Implementation (<b>OSDI'23</b>)</cite>, 
+	July 10–12, 2023.
+	<br>
+        <br>
+			
+	<li>
+	<a href="papers/atomig.pdf">AtoMig: Automatically Migrating Millions Lines of Code from TSO to WMM</a><br>
+	Martin Beck, Koustubha Bhat, Lazar Stričević, Geng Chen, Diogo Behrens, Ming Fu*, Viktor Vafeiadis, 
+	Haibo Chen and Hermann Härtig. <cite>The 28th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (<b>ASPLOS'23</b>)</cite>, 
+	March, 2023.
+	<br>
+        <br>
+			
+	<li>
+	<a href="papers/BBQ.pdf">BBQ: A Block-based Bounded Queue for Exchanging Data and Profiling </a><br>
+	Jiawei Wang, Diogo Behrens, Ming Fu*, Lilith Oberhauser, Jonas Oberhauser, and Jitang Lei, Geng Chen, Hermann Härtig, Haibo Chen.
+	<cite>The 2022 USENIX Annual Technical Conference (<b>USENIX ATC'22</b>) </cite>, July 11–13, 2022.
+	<br>
+        <br>
+		
+	<li>
+	<a href="papers/CNA.pdf">Verifying and Optimizing Compact NUMA-Aware Locks on Weak Memory Models </a><br>
+	Antonio Paolillo, Hernán Ponce-de-León, Thomas Haas, Diogo Behrens, Rafael Chehab, Ming Fu, Roland Meyer.
+	<cite>Technical note, [<a href="https://arxiv.org/abs/2111.15240">arXiv</a>]</cite>, July 9, 2022.
+	<br>
+        <br>
+		
+	<li>
+	<a href="papers/clof.pdf">CLoF: A Compositional Lock Framework for Multi-level NUMA Systems</a><br>
+	Rafael Lourenco de Lima Chehab, Antonio Paolillo, Diogo Behrens, Ming Fu*, Hermann Härtig, Haibo Chen (<a href="https://b23.tv/noUmxI">Talk</a> given by Antonio).
+	<cite>The 28th ACM Symposium on Operating Systems Principles (<b>SOSP'21</b>) </cite>, October 25-28, 2021.
+	<br>
+        <br>
+	
+	<li>
+	<a href="papers/netys-2021.pdf">Verifying and Optimizing the HMCS Lock for Arm Servers</a><br>
+	Jonas Oberhauser, Lilith Oberhauser, Antonio Paolillo, Diogo Behrens, Ming Fu, Viktor Vafeiadis (<a href="https://b23.tv/y7xkrz">Talk</a> given by Jonas).<br>
+	<cite>The 9th International Conference on Networked Systems (<b>NETYS'21</b>)</cite>, May, 2021.
+	<br>
+        <br>
+
+	<li>
+	<a href="papers/asplos2021-vsync.pdf"> VSync: Push-Button Verification and Optimization for Synchronization Primitives on Weak Memory Models</a><br>
+	Jonas Oberhauser, Rafael Lourenco de Lima Chehab, Diogo Behrens, Ming Fu*, Antonio Paolillo, Lilith Oberhauser,
+	Koustubha Bhat, Yuzhong Wen, Haibo Chen, Jaeho Kim, Viktor Vafeiadis (<a href="https://b23.tv/6rg68v">Short talk</a> and 
+	<a href=" https://b23.tv/TlnTyA">Full talk</a> given by Jonas).<br>
+	<cite>The 26th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (<b>ASPLOS'21, Distinguished Paper Award</b>)</cite>, 
+	April, 2021.
+	<br>
+        <br>
+		
+	<li>
+	<a href="papers/sparc.pdf"> Formalizing SPARCv8 instruction set architecture in Coq</a><br>
+	Jiawei Wang, Ming Fu, Lei Qiao, Xinyu Feng.
+	<cite> Science of Computer Programming </cite>, 187: 102371 (2020).
+	<br>
+        <br>	
+		
+	<li>	
+	<a href="papers/sosp19-atomfs.pdf"> Using Concurrent Relational Logic with Helper for Verifying the AtomFS File System</a><br>
+	Mo Zou, Haoran Ding, Dong Du, Ming Fu, Ronghui Gu, Haibo Chen. 
+	<cite> The 27th ACM Symposium on Operating System Principles (<b>SOSP'19</b>)</cite>. Deerhurst Resort, Huntsville, Ontario, Canada, October 27-30, 2019.
+	<br>
+        <br>
+		
+	<li> 
+	<a href="research/certiucos/"> A Practical Verification Framework for Preemptive OS Kernels </a><br>
+       	Fengwei Xu, Ming Fu*, Xinyu Feng, Xiaoran Zhang, Hui Zhang and Zhaohui Li. 
+	<cite> Proc. 28th International Conference on Computer Aided Verification (<b>CAV'16</b>)</cite>,
+	Toronto, Ontario, Canada, pages 59--79, July, 2016. 
+        <br>
+        <br>
+
+       	<li> 
+	<a href="papers/p97-cao.pdf"> Practical Tactics for Verifying C Programs in Coq</a><br>
+        Jingyuan Cao, Ming Fu* and Xinyu Feng. 
+	<cite> Proc. 4th ACM-SIGPLAN Conference on Certified Programs and Proofs (<b>CPP'15</b>)</cite>,
+       	Mumbai, India, pages 97--108, January, 2015.
+        <br>
+        <br>
+   
+    	<li>
+    	<a href="papers/TOPLAS14_Preprint.pdf">Rely-Guarantee-Based Simulation for Compositional Verification of Concurrent Program Transformations</a><br>
+        Hongjin Liang, Xinyu Feng and Ming Fu. (Journal version of <a href="http://kyhcs.ustcsz.edu.cn/relconcur/rgsim">POPL'12</a>)<br>
+	<cite>ACM Transactions on Programming Languages and Systems (<b>TOPLAS</b>)</cite>, 
+	Vol. 36, No. 1, Article 3, March 2014.
+    	<br>
+	<br>
+
+
+ 	<li>
+	<a href="papers/32_02-Kouskoulas-Zero.pdf"> Applying Mathematical Logic to Create Zero-Defect Software</a> <br>
+       	Yanni Kouskoulas, Ming Fu, Zhong Shao and Peter Kazanzides.<br>
+	<cite> JOHNS HOPKINS APL TECHNICAL DIGEST, VOLUME 32, NUMBER 2 (2013)</cite>.
+       	<br>	
+       	<br>
+
+
+    	<li>
+  	<a href="papers/POPL2012.pdf">A Rely-Guarantee-Based Simulation for Verifying Concurrent Program Transformations</a><br>
+    	Hongjin Liang, Xinyu Feng, and Ming Fu.
+    	<cite>Proc. 39th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages (<b>POPL'12</b>)</cite>,
+      	 Philadelphia, Pennsylvania, USA, pages 455-468, January, 2012.
+    	<br>
+	<br>
+ 
+	<li>
+	<a href="papers/concur10.pdf">Reasoning about Optimistic Concurrency Using a Program Logic for History</a><br>
+    	Ming Fu, Yong Li, Xinyu Feng, Zhong Shao and Yu Zhang.<br>
+    	<cite>Proc. 21st International Conference on Concurrency Theory (<b>CONCUR'10</b>)</cite>, 
+    	Paris, France, pages 388-402, August 2010.
+</ol>
+    <br>
+    </td>
+  </tr>
+ 
+  <tr>
+    <td>
+    <hr>
+    <address><a href="http://brightfu.github.io/">Ming Fu</a></address>
+    <!-- Created: Fri Feb  4 21:59:18 EST 2005 -->
+    <!-- hhmts start -->
+Last modified: December 21, 2025
+<!-- hhmts end -->
+  </td>
+  </tr>
+ 
+  </table>
+  <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+    var pageTracker = _gat._getTracker("UA-6751524-1");
+    pageTracker._trackPageview();
+  </script>
+  </body>
+</html>
+
+
+
+
