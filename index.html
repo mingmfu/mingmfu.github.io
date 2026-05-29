@@ -3,298 +3,361 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Dr. Ming Fu - Director of Huawei Fields Lab. Research interests: Operating Systems, Concurrency Verification, Formal Verification.">
-  <meta name="keywords" content="Operating System, Multicore Concurrency, Formal Verification, OS Verification">
-  <title>Dr. Ming Fu - Huawei Fields Lab</title>
+  <meta name="description" content="Dr. Ming Fu (付明), Director of Huawei Fields Lab. Research in operating systems, concurrency verification, weak memory models, and formal verification of systems software.">
+  <meta name="keywords" content="Ming Fu, 付明, Huawei Fields Lab, operating systems, formal verification, concurrency verification, weak memory models, VSync, libvsync">
+  <title>Dr. Ming Fu (付明) | Operating Systems and Formal Verification</title>
+  <link rel="icon" href="ming.jpg" type="image/jpeg">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- Header / Hero Section -->
-  <header class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <img src="ming.jpg" alt="Dr. Ming Fu" class="hero-photo">
-        <div class="hero-info">
-          <h1>Dr. Ming Fu</h1>
-          <p class="hero-title">Director of Huawei Fields Lab</p>
-          <p class="hero-affiliation">Huawei Technologies Co., Ltd.</p>
-          
-          <div class="hero-contact">
-            <span>📍 Hangzhou, China</span>
-            <span>✉️ ming.fu AT huawei DOT com</span>
-          </div>
-          
-          <div class="hero-links">
-            <a href="fuming-cv.pdf" target="_blank">📄 CV</a>
-          </div>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Primary navigation">
+      <a class="nav-brand" href="#top">Ming Fu</a>
+      <div class="nav-links">
+        <a href="#research">Research</a>
+        <a href="#systems">Systems</a>
+        <a href="#publications">Publications</a>
+        <a href="#talks">Talks</a>
+        <a href="fuming-cv.pdf" target="_blank" rel="noopener">CV</a>
+      </div>
+    </nav>
+
+    <section class="hero container" id="top">
+      <div class="hero-media">
+        <img src="ming.jpg" alt="Portrait of Dr. Ming Fu" class="hero-photo">
+      </div>
+      <div class="hero-copy">
+        <p class="eyebrow">Operating systems · Formal verification · Weak memory models</p>
+        <h1>Ming Fu <span lang="zh-Hans">付明</span></h1>
+        <p class="role">Director, Huawei Fields Lab · Huawei Technologies Co., Ltd.</p>
+        <p class="summary">
+          I work on reliable and high-performance systems software, with a focus on
+          concurrency verification, weak memory consistency, OS architecture, and
+          formal verification of operating systems and synchronization primitives.
+          My research connects rigorous program reasoning with deployed industrial
+          systems.
+        </p>
+        <div class="action-row" aria-label="Profile links">
+          <a class="button primary" href="fuming-cv.pdf" target="_blank" rel="noopener">Download CV</a>
+          <a class="button" href="mailto:ming.fu@huawei.com">Email</a>
+          <a class="button" href="https://github.com/open-s4c/libvsync" target="_blank" rel="noopener">libvsync</a>
         </div>
       </div>
-    </div>
+    </section>
   </header>
 
-  <main>
-    
-    <!-- About Section -->
-    <section class="about">
-      <div class="container">
-        <div class="about-content">
-          <h2>Research</h2>
-          <p class="about-text">
-            I am interested in industry-oriented research on concurrency verification, weak memory consistency, 
-            OS architecture, and formal verification of operating systems. The goal is to build highly efficient 
-            and reliable OS rendering services and Web engines.
+  <main id="main">
+    <section class="section highlights" aria-label="Career highlights">
+      <div class="container highlight-grid">
+        <div class="highlight">
+          <span class="highlight-value">2023-Present</span>
+          <span class="highlight-label">Director of Huawei Fields Lab</span>
+        </div>
+        <div class="highlight">
+          <span class="highlight-value">2019-2023</span>
+          <span class="highlight-label">Founded and led Huawei Dresden Research Center</span>
+        </div>
+        <div class="highlight">
+          <span class="highlight-value">ASPLOS 2021</span>
+          <span class="highlight-label">Distinguished Paper Award for VSync</span>
+        </div>
+        <div class="highlight">
+          <span class="highlight-value">OSDI / SOSP / ASPLOS</span>
+          <span class="highlight-label">Systems and verification research at top venues</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="research">
+      <div class="container split-section">
+        <div>
+          <p class="section-kicker">Research</p>
+          <h2>Verification techniques for real systems</h2>
+        </div>
+        <div class="section-body">
+          <p>
+            My research agenda is to make formal methods useful for performance-critical
+            systems software. Recent work studies verified synchronization primitives,
+            scalable mobile rendering services, verified memory allocation, efficient
+            tracing, and program migration across weak memory architectures.
           </p>
-          
-          <div class="research-areas">
-            <span class="research-tag">Operating Systems</span>
-            <span class="research-tag">Concurrency Verification</span>
-            <span class="research-tag">Formal Verification</span>
-            <span class="research-tag">Weak Memory Models</span>
-            <span class="research-tag">OS Architecture</span>
+          <div class="topic-grid">
+            <div class="topic">
+              <h3>Concurrency Verification</h3>
+              <p>Program logics, refinement reasoning, and verification of fine-grained concurrent algorithms.</p>
+            </div>
+            <div class="topic">
+              <h3>Weak Memory Models</h3>
+              <p>Verification and optimization of synchronization primitives on Arm and other weak-memory architectures.</p>
+            </div>
+            <div class="topic">
+              <h3>Operating Systems</h3>
+              <p>OS architecture, kernel verification, rendering services, tracing, scheduling, and multicore scalability.</p>
+            </div>
+            <div class="topic">
+              <h3>Industrial Formal Methods</h3>
+              <p>Building tools and methods that scale from proofs to production systems and open-source libraries.</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Publications Section -->
-    <section class="publications">
+    <section class="section tinted" id="systems">
       <div class="container">
-        <h2>Selected Publications</h2>
-        <h3 class="pub-year">2026</h3>
-        <ul class="pub-list">
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/" target="_blank">jwmalloc: A Verified Memory Allocator for Mobile Devices</a>
+        <div class="section-heading">
+          <p class="section-kicker">Systems and Open Source</p>
+          <h2>Research artifacts with practical impact</h2>
+        </div>
+        <div class="project-list">
+          <article class="project">
+            <div class="project-year">2021-Present</div>
+            <div>
+              <h3><a href="https://github.com/open-s4c/libvsync" target="_blank" rel="noopener">VSync / libvsync</a></h3>
+              <p>
+                A verified library of synchronization primitives and concurrent data
+                structures for weak memory architectures. The VSync research line
+                received the ASPLOS 2021 Distinguished Paper Award.
+              </p>
             </div>
-            <div class="pub-authors">Jiawei Wang, Ming Fu*, Ruixian Wang, Chao Xu, Jonas Oberhauser, Haibo Chen</div>
-            <div class="pub-venue"><strong>to appear in OSDI 2026</strong>, July 13–15, 2026</div>
-          </li>  
-        </ul>
-              
-        <h3 class="pub-year">2025</h3>
-        <ul class="pub-list">
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/osdi25-final255.pdf" target="_blank">OS Rendering Service Made Parallel with Out-of-Order Execution and In-Order Commit</a>
+          </article>
+          <article class="project">
+            <div class="project-year">2019-2023</div>
+            <div>
+              <h3>Huawei Dresden Research Center</h3>
+              <p>
+                Founded the research center from scratch while on assignment in
+                Germany, and led a team working on concurrency verification, weak
+                memory consistency, synchronization, and systems software reliability.
+              </p>
             </div>
-            <div class="pub-authors">Yuanpei Wu, Dong Du, Chao Xu, Yubin Xia, Yang Yu, Ming Fu, Binyu Zang, Haibo Chen</div>
-            <div class="pub-venue"><strong>OSDI 2025</strong>, July 7–9, 2025</div>
-          </li>
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/dvsync.pdf" target="_blank">D-VSync: Decoupled Rendering and Displaying for Smartphone Graphics</a>
+          </article>
+          <article class="project">
+            <div class="project-year">2017-2019</div>
+            <div>
+              <h3>Hongmeng OS Kernel Verification</h3>
+              <p>
+                Led formal verification work for key microkernel components and
+                participated in the design and development of the Hongmeng microkernel.
+              </p>
             </div>
-            <div class="pub-authors">Yuanpei Wu, Dong Du, Chao Xu, Yubin Xia, Ming Fu, Binyu Zang, Haibo Chen</div>
-            <div class="pub-venue"><strong>ASPLOS 2025</strong>, March 2025</div>
-          </li>
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/btrace.pdf" target="_blank">Enabling Efficient Mobile Tracing with BTrace</a>
-            </div>
-            <div class="pub-authors">Jiawei Wang, Nian Liu, Arnau Casadevall-Saiz, Yutao Liu, Diogo Behrens, Ming Fu, Ning Jia, Hermann Härtig, Haibo Chen</div>
-            <div class="pub-venue"><strong>ASPLOS 2025</strong>, March 2025</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2023</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/osdi23_bwos.pdf" target="_blank">BWoS: Formally Verified Block-based Work Stealing for Parallel Processing</a>
-            </div>
-            <div class="pub-authors">Jiawei Wang, Bohdan Trach, Ming Fu*, Diogo Behrens, Jonathan Schwender, Yutao Liu, Jitang Lei, Viktor Vafeiadis, Hermann Härtig, Haibo Chen</div>
-            <div class="pub-venue"><strong>OSDI 2023</strong>, July 10–12, 2023</div>
-            <div class="pub-links">
-              <a href="papers/osdi23_bwos_slides.pdf" target="_blank">Slides</a>
-            </div>
-          </li>
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/atomig.pdf" target="_blank">AtoMig: Automatically Migrating Millions Lines of Code from TSO to WMM</a>
-            </div>
-            <div class="pub-authors">Martin Beck, Koustubha Bhat, Lazar Stričević, Geng Chen, Diogo Behrens, Ming Fu*, Viktor Vafeiadis, Haibo Chen, Hermann Härtig</div>
-            <div class="pub-venue"><strong>ASPLOS 2023</strong>, March 2023</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2022</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/BBQ.pdf" target="_blank">BBQ: A Block-based Bounded Queue for Exchanging Data and Profiling</a>
-            </div>
-            <div class="pub-authors">Jiawei Wang, Diogo Behrens, Ming Fu*, Lilith Oberhauser, Jonas Oberhauser, Jitang Lei, Geng Chen, Hermann Härtig, Haibo Chen</div>
-            <div class="pub-venue"><strong>USENIX ATC 2022</strong>, July 11–13, 2022</div>
-          </li>
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="https://arxiv.org/abs/2111.15240" target="_blank">Verifying and Optimizing Compact NUMA-Aware Locks on Weak Memory Models</a>
-            </div>
-            <div class="pub-authors">Antonio Paolillo, Hernán Ponce-de-León, Thomas Haas, Diogo Behrens, Rafael Chehab, Ming Fu, Roland Meyer</div>
-            <div class="pub-venue">Technical Note, arXiv, July 9, 2022</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2021</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/clof.pdf" target="_blank">CLoF: A Compositional Lock Framework for Multi-level NUMA Systems</a>
-            </div>
-            <div class="pub-authors">Rafael Lourenco de Lima Chehab, Antonio Paolillo, Diogo Behrens, Ming Fu*, Hermann Härtig, Haibo Chen</div>
-            <div class="pub-venue"><strong>SOSP 2021</strong>, October 25-28, 2021</div>
-          </li>
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/netys-2021.pdf" target="_blank">Verifying and Optimizing the HMCS Lock for Arm Servers</a>
-            </div>
-            <div class="pub-authors">Jonas Oberhauser, Lilith Oberhauser, Antonio Paolillo, Diogo Behrens, Ming Fu, Viktor Vafeiadis</div>
-            <div class="pub-venue"><strong>NETYS 2021</strong>, May 2021</div>
-          </li>
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/asplos2021-vsync.pdf" target="_blank">VSync: Push-Button Verification and Optimization for Synchronization Primitives on Weak Memory Models</a>
-              <span class="pub-award">Distinguished Paper</span>
-            </div>
-            <div class="pub-authors">Jonas Oberhauser, Rafael Lourenco de Lima Chehab, Diogo Behrens, Ming Fu*, Antonio Paolillo, Lilith Oberhauser, Koustubha Bhat, Yuzhong Wen, Haibo Chen, Jaeho Kim, Viktor Vafeiadis</div>
-            <div class="pub-venue"><strong>ASPLOS 2021</strong>, April 2021</div>
-            <div class="pub-links">
-              <a href="https://b23.tv/6rg68v" target="_blank">Short Talk</a>
-              <a href="https://b23.tv/TlnTyA" target="_blank">Full Talk</a>
-            </div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2020</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/sparc.pdf" target="_blank">Formalizing SPARCv8 Instruction Set Architecture in Coq</a>
-            </div>
-            <div class="pub-authors">Jiawei Wang, Ming Fu, Lei Qiao, Xinyu Feng</div>
-            <div class="pub-venue">Science of Computer Programming, 187: 102371, 2020</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2019</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/sosp19-atomfs.pdf" target="_blank">Using Concurrent Relational Logic with Helper for Verifying the AtomFS File System</a>
-            </div>
-            <div class="pub-authors">Mo Zou, Haoran Ding, Dong Du, Ming Fu, Ronghui Gu, Haibo Chen</div>
-            <div class="pub-venue"><strong>SOSP 2019</strong>, October 27-30, 2019</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2016</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="research/certiucos/" target="_blank">A Practical Verification Framework for Preemptive OS Kernels</a>
-            </div>
-            <div class="pub-authors">Fengwei Xu, Ming Fu*, Xinyu Feng, Xiaoran Zhang, Hui Zhang, Zhaohui Li</div>
-            <div class="pub-venue"><strong>CAV 2016</strong>, July 2016</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2015</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/p97-cao.pdf" target="_blank">Practical Tactics for Verifying C Programs in Coq</a>
-            </div>
-            <div class="pub-authors">Jingyuan Cao, Ming Fu*, Xinyu Feng</div>
-            <div class="pub-venue"><strong>CPP 2015</strong>, January 2015</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2014</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/TOPLAS14_Preprint.pdf" target="_blank">Rely-Guarantee-Based Simulation for Compositional Verification of Concurrent Program Transformations</a>
-            </div>
-            <div class="pub-authors">Hongjin Liang, Xinyu Feng, Ming Fu</div>
-            <div class="pub-venue">ACM Transactions on Programming Languages and Systems (TOPLAS), Vol. 36, No. 1, Article 3, March 2014</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2013</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/32_02-Kouskoulas-Zero.pdf" target="_blank">Applying Mathematical Logic to Create Zero-Defect Software</a>
-            </div>
-            <div class="pub-authors">Yanni Kouskoulas, Ming Fu, Zhong Shao, Peter Kazanzides</div>
-            <div class="pub-venue">Johns Hopkins APL Technical Digest, Volume 32, Number 2, 2013</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2012</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/POPL2012.pdf" target="_blank">A Rely-Guarantee-Based Simulation for Verifying Concurrent Program Transformations</a>
-            </div>
-            <div class="pub-authors">Hongjin Liang, Xinyu Feng, Ming Fu</div>
-            <div class="pub-venue"><strong>POPL 2012</strong>, January 2012</div>
-          </li>
-
-        </ul>
-
-        <h3 class="pub-year">2010</h3>
-        <ul class="pub-list">
-
-          <li class="pub-item">
-            <div class="pub-title">
-              <a href="papers/concur10.pdf" target="_blank">Reasoning about Optimistic Concurrency Using a Program Logic for History</a>
-            </div>
-            <div class="pub-authors">Ming Fu, Yong Li, Xinyu Feng, Zhong Shao, Yu Zhang</div>
-            <div class="pub-venue"><strong>CONCUR 2010</strong>, August 2010</div>
-          </li>
-
-        </ul>
-
+          </article>
+        </div>
       </div>
     </section>
 
+    <section class="section compact" id="appointments">
+      <div class="container split-section">
+        <div>
+          <p class="section-kicker">Appointments</p>
+          <h2>Academic and industrial research leadership</h2>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-date">2023-Present</div>
+            <div>
+              <h3>Director, Huawei Fields Lab</h3>
+              <p>Huawei Technologies Co., Ltd., Hangzhou, China.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2019-2023</div>
+            <div>
+              <h3>Founder and Director, Huawei Dresden Research Center</h3>
+              <p>Established the center from the ground up and led its research team in Dresden, Germany.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2017-2019</div>
+            <div>
+              <h3>Senior Expert, Huawei OS Kernel Lab</h3>
+              <p>Formal verification and microkernel research for Hongmeng OS.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2011-2017</div>
+            <div>
+              <h3>University of Science and Technology of China</h3>
+              <p>Postdoctoral researcher and associate professor in systems verification.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2009-2010</div>
+            <div>
+              <h3>Visiting Assistant in Research, Yale University</h3>
+              <p>Program logic for optimistic concurrent programs. Advisor: Zhong Shao.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="publications">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">Publications</p>
+          <h2>Selected publications</h2>
+          <p class="note">* denotes corresponding author.</p>
+        </div>
+
+        <div class="publication-group">
+          <h3 class="pub-year">2026</h3>
+          <article class="pub-item featured">
+            <div class="pub-title"><a href="papers/osdi26-paper51.pdf" target="_blank" rel="noopener">jwmalloc: A Verified Memory Allocator for Mobile Devices</a></div>
+            <div class="pub-authors">Jiawei Wang, Ming Fu*, Ruixian Wang, Chao Xu, Jonas Oberhauser, Haibo Chen</div>
+            <div class="pub-venue"><strong>OSDI 2026</strong>, to appear</div>
+          </article>
+        </div>
+
+        <div class="publication-group">
+          <h3 class="pub-year">2025</h3>
+          <article class="pub-item featured">
+            <div class="pub-title"><a href="papers/osdi25-final255.pdf" target="_blank" rel="noopener">OS Rendering Service Made Parallel with Out-of-Order Execution and In-Order Commit</a></div>
+            <div class="pub-authors">Yuanpei Wu, Dong Du, Chao Xu, Yubin Xia, Yang Yu, Ming Fu, Binyu Zang, Haibo Chen</div>
+            <div class="pub-venue"><strong>OSDI 2025</strong>, July 7-9, 2025</div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/dvsync.pdf" target="_blank" rel="noopener">D-VSync: Decoupled Rendering and Displaying for Smartphone Graphics</a></div>
+            <div class="pub-authors">Yuanpei Wu, Dong Du, Chao Xu, Yubin Xia, Ming Fu, Binyu Zang, Haibo Chen</div>
+            <div class="pub-venue"><strong>ASPLOS 2025</strong>, March 2025</div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/btrace.pdf" target="_blank" rel="noopener">Enabling Efficient Mobile Tracing with BTrace</a></div>
+            <div class="pub-authors">Jiawei Wang, Nian Liu, Arnau Casadevall-Saiz, Yutao Liu, Diogo Behrens, Ming Fu, Ning Jia, Hermann Hartig, Haibo Chen</div>
+            <div class="pub-venue"><strong>ASPLOS 2025</strong>, March 2025</div>
+          </article>
+        </div>
+
+        <div class="publication-group">
+          <h3 class="pub-year">2023</h3>
+          <article class="pub-item featured">
+            <div class="pub-title"><a href="papers/osdi23_bwos.pdf" target="_blank" rel="noopener">BWoS: Formally Verified Block-based Work Stealing for Parallel Processing</a></div>
+            <div class="pub-authors">Jiawei Wang, Bohdan Trach, Ming Fu*, Diogo Behrens, Jonathan Schwender, Yutao Liu, Jitang Lei, Viktor Vafeiadis, Hermann Hartig, Haibo Chen</div>
+            <div class="pub-venue"><strong>OSDI 2023</strong>, July 10-12, 2023 · <a href="papers/osdi23_bwos_slides.pdf" target="_blank" rel="noopener">Slides</a></div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/atomig.pdf" target="_blank" rel="noopener">AtoMig: Automatically Migrating Millions Lines of Code from TSO to WMM</a></div>
+            <div class="pub-authors">Martin Beck, Koustubha Bhat, Lazar Stricevic, Geng Chen, Diogo Behrens, Ming Fu*, Viktor Vafeiadis, Haibo Chen, Hermann Hartig</div>
+            <div class="pub-venue"><strong>ASPLOS 2023</strong>, March 2023</div>
+          </article>
+        </div>
+
+        <div class="publication-group">
+          <h3 class="pub-year">2022-2021</h3>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/BBQ.pdf" target="_blank" rel="noopener">BBQ: A Block-based Bounded Queue for Exchanging Data and Profiling</a></div>
+            <div class="pub-authors">Jiawei Wang, Diogo Behrens, Ming Fu*, Lilith Oberhauser, Jonas Oberhauser, Jitang Lei, Geng Chen, Hermann Hartig, Haibo Chen</div>
+            <div class="pub-venue"><strong>USENIX ATC 2022</strong>, July 11-13, 2022</div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/clof.pdf" target="_blank" rel="noopener">CLoF: A Compositional Lock Framework for Multi-level NUMA Systems</a></div>
+            <div class="pub-authors">Rafael Lourenco de Lima Chehab, Antonio Paolillo, Diogo Behrens, Ming Fu*, Hermann Hartig, Haibo Chen</div>
+            <div class="pub-venue"><strong>SOSP 2021</strong>, October 25-28, 2021</div>
+          </article>
+          <article class="pub-item featured">
+            <div class="pub-title"><a href="papers/asplos2021-vsync.pdf" target="_blank" rel="noopener">VSync: Push-Button Verification and Optimization for Synchronization Primitives on Weak Memory Models</a> <span class="pub-award">Distinguished Paper</span></div>
+            <div class="pub-authors">Jonas Oberhauser, Rafael Lourenco de Lima Chehab, Diogo Behrens, Ming Fu*, Antonio Paolillo, Lilith Oberhauser, Koustubha Bhat, Yuzhong Wen, Haibo Chen, Jaeho Kim, Viktor Vafeiadis</div>
+            <div class="pub-venue"><strong>ASPLOS 2021</strong>, April 2021 · <a href="https://b23.tv/6rg68v" target="_blank" rel="noopener">Short Talk</a> · <a href="https://b23.tv/TlnTyA" target="_blank" rel="noopener">Full Talk</a></div>
+          </article>
+        </div>
+
+        <div class="publication-group">
+          <h3 class="pub-year">Earlier work</h3>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/sosp19-atomfs.pdf" target="_blank" rel="noopener">Using Concurrent Relational Logic with Helper for Verifying the AtomFS File System</a></div>
+            <div class="pub-authors">Mo Zou, Haoran Ding, Dong Du, Ming Fu, Ronghui Gu, Haibo Chen</div>
+            <div class="pub-venue"><strong>SOSP 2019</strong>, October 27-30, 2019</div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="research/certiucos/" target="_blank" rel="noopener">A Practical Verification Framework for Preemptive OS Kernels</a></div>
+            <div class="pub-authors">Fengwei Xu, Ming Fu*, Xinyu Feng, Xiaoran Zhang, Hui Zhang, Zhaohui Li</div>
+            <div class="pub-venue"><strong>CAV 2016</strong>, July 2016</div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/p97-cao.pdf" target="_blank" rel="noopener">Practical Tactics for Verifying C Programs in Coq</a></div>
+            <div class="pub-authors">Jingyuan Cao, Ming Fu*, Xinyu Feng</div>
+            <div class="pub-venue"><strong>CPP 2015</strong>, January 2015</div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/TOPLAS14_Preprint.pdf" target="_blank" rel="noopener">Rely-Guarantee-Based Simulation for Compositional Verification of Concurrent Program Transformations</a></div>
+            <div class="pub-authors">Hongjin Liang, Xinyu Feng, Ming Fu</div>
+            <div class="pub-venue">ACM Transactions on Programming Languages and Systems, 36(1), March 2014</div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/POPL2012.pdf" target="_blank" rel="noopener">A Rely-Guarantee-Based Simulation for Verifying Concurrent Program Transformations</a></div>
+            <div class="pub-authors">Hongjin Liang, Xinyu Feng, Ming Fu</div>
+            <div class="pub-venue"><strong>POPL 2012</strong>, January 2012</div>
+          </article>
+          <article class="pub-item">
+            <div class="pub-title"><a href="papers/concur10.pdf" target="_blank" rel="noopener">Reasoning about Optimistic Concurrency Using a Program Logic for History</a></div>
+            <div class="pub-authors">Ming Fu, Yong Li, Xinyu Feng, Zhong Shao, Yu Zhang</div>
+            <div class="pub-venue"><strong>CONCUR 2010</strong>, August 2010</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tinted" id="talks">
+      <div class="container split-section">
+        <div>
+          <p class="section-kicker">Talks and Service</p>
+          <h2>Public presentations and community leadership</h2>
+        </div>
+        <div class="talk-list">
+          <article class="talk">
+            <div class="talk-date">2025</div>
+            <div>
+              <h3><a href="https://hangzhou2025.gosim.org/zh/speakers/ming-fu/" target="_blank" rel="noopener">Opening Remarks, Future Web</a></h3>
+              <p>GOSIM Hangzhou 2025.</p>
+            </div>
+          </article>
+          <article class="talk">
+            <div class="talk-date">2025</div>
+            <div>
+              <h3><a href="https://pcedu.pconline.com.cn/1994/19944612.html" target="_blank" rel="noopener">Opening remarks and forum producer, Web Forum</a></h3>
+              <p>OpenHarmony Technology Conference 2025.</p>
+            </div>
+          </article>
+          <article class="talk">
+            <div class="talk-date">2024</div>
+            <div>
+              <h3>End-to-End Industrial Practice for High-Performance Safe Concurrency</h3>
+              <p>CCF China Software Conference 2024, Formal Methods in Systems Software Forum.</p>
+            </div>
+          </article>
+          <article class="talk">
+            <div class="talk-date">2022</div>
+            <div>
+              <h3><a href="https://www.ccf.org.cn/Media_list/cncc/2022-09-30/774895.shtml" target="_blank" rel="noopener">Industrial practice of improving performance through verification</a></h3>
+              <p>CNCC 2022, Guiyang, China.</p>
+            </div>
+          </article>
+          <article class="talk">
+            <div class="talk-date">2019</div>
+            <div>
+              <h3><a href="https://vetss.org.uk/wp-content/uploads/sites/122/2019/09/Verified-Software-Workshop-Programme-and-Speaker-list.pdf" target="_blank" rel="noopener">Taking Formal Verification of Systems Software from Academia to Industry</a></h3>
+              <p>Verified Software Workshop Programme (VeTSS).</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
-    <div class="container">
-      <p>© 2025 Dr. Ming Fu | <a href="mailto:ming.fu@huawei.com">ming.fu@huawei.com</a></p>
+    <div class="container footer-content">
+      <div>
+        <strong>Ming Fu</strong>
+        <p>Director, Huawei Fields Lab · Hangzhou, China</p>
+      </div>
+      <div class="footer-links">
+        <a href="mailto:ming.fu@huawei.com">ming.fu@huawei.com</a>
+        <a href="fuming-cv.pdf" target="_blank" rel="noopener">CV</a>
+      </div>
       <p class="text-muted">Last updated: May 2026</p>
     </div>
   </footer>
-
 </body>
 </html>
