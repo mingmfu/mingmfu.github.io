@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L2 压力测试 — 全动作覆盖</title>
+<style>
+  :root { --bg: #f5f5f5; --card: #fff; --border: #d0d0d0; --accent: #2563eb; --danger: #dc2626; --success: #16a34a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: #1a1a2e; padding: 16px; }
+  h1 { font-size: 22px; margin-bottom: 16px; }
+  h2 { font-size: 16px; margin-bottom: 10px; padding: 6px 10px; background: #e8ecf1; border-radius: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 14px; }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; break-inside: avoid; }
+  label { display: block; font-size: 13px; margin-bottom: 4px; color: #555; }
+  input, textarea, select, button { font-family: inherit; font-size: 14px; }
+  input[type="text"], input[type="email"], input[type="password"], input[type="number"],
+  input[type="date"], input[type="url"], textarea, select {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px;
+    transition: border-color 0.2s;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+  button, .btn {
+    padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer;
+    font-size: 13px; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+  }
+  button:hover, .btn:hover { background: #f0f4ff; border-color: var(--accent); }
+  button:active { transform: scale(0.97); }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+  button.success { background: var(--success); color: #fff; border-color: var(--success); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Log */
+  #log-panel { position: fixed; right: 12px; top: 12px; width: 340px; max-height: 55vh; z-index: 9999;
+    background: #0d1117; color: #58a6ff; border-radius: 8px; font-size: 11px; font-family: 'SF Mono', monospace;
+    display: flex; flex-direction: column; }
+  #log-header { padding: 8px 12px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
+  #log-header span { font-weight: 600; color: #e6edf3; }
+  #log-list { overflow-y: auto; flex: 1; padding: 8px 12px; max-height: calc(55vh - 40px); }
+  #log-list div { padding: 2px 0; border-bottom: 1px solid #161b22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #log-list .err { color: #f85149; }
+  #log-list .ok { color: #3fb950; }
+  #log-list .warn { color: #d2991d; }
+  #clear-log { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; font-size: 11px; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
+
+  /* Dropdown / Hover */
+  .dropdown { position: relative; display: inline-block; }
+  .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid var(--border);
+    border-radius: 6px; min-width: 160px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 100; padding: 4px 0; }
+  .dropdown:hover .dropdown-menu { display: block; }
+  .dropdown-menu a, .dropdown-menu button { display: block; width: 100%; text-align: left; padding: 8px 14px; border: none;
+    background: none; font-size: 13px; cursor: pointer; }
+  .dropdown-menu a:hover, .dropdown-menu button:hover { background: #f0f4ff; }
+
+  /* Tooltip */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-text { visibility: hidden; opacity: 0; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+    background: #333; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; white-space: nowrap;
+    transition: opacity 0.2s; pointer-events: none; z-index: 100; }
+  .tooltip-wrap:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 12px; padding: 24px; min-width: 380px; max-width: 90vw; box-shadow: 0 8px 40px rgba(0,0,0,0.2); }
+  .modal h3 { margin-bottom: 12px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+  /* Accordion */
+  .accordion { border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px; }
+  .accordion-header { padding: 10px 14px; background: #fafafa; cursor: pointer; display: flex; justify-content: space-between;
+    align-items: center; user-select: none; }
+  .accordion-header:hover { background: #f0f4ff; }
+  .accordion-body { display: none; padding: 12px 14px; border-top: 1px solid var(--border); }
+  .accordion.open .accordion-body { display: block; }
+  .accordion.open .accordion-header { background: #eef2ff; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 12px; }
+  .tab-btn { padding: 8px 18px; border: none; background: none; cursor: pointer; font-size: 13px;
+    border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab-btn:hover { color: var(--accent); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 10px; background: #f8f9fb; border-bottom: 2px solid var(--border);
+    cursor: pointer; user-select: none; }
+  th:hover { background: #eef2ff; }
+  td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+  tr:hover td { background: #fafcff; }
+  tr.selected td { background: #eef2ff; }
+
+  /* Scroll container */
+  .scroll-box { height: 140px; overflow-y: auto; border: 1px dashed #999; border-radius: 6px; padding: 8px; background: #fafafa; }
+  .scroll-box p { padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+
+  /* Toast */
+  .toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 600;
+    display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .toast { padding: 10px 20px; border-radius: 8px; color: #fff; font-size: 13px; animation: toastIn 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .toast.info { background: var(--accent); }
+  .toast.error { background: var(--danger); }
+  .toast.success { background: var(--success); }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Progress */
+  .progress-bar { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.5s; width: 0%; }
+
+  /* Search */
+  .search-results { border: 1px solid var(--border); border-radius: 6px; max-height: 160px; overflow-y: auto; display: none; }
+  .search-results.visible { display: block; }
+  .search-item { padding: 8px 12px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+  .search-item:hover { background: #f0f4ff; }
+  .search-item.selected { background: #eef2ff; }
+
+  /* Multi-select */
+  .multi-select { position: relative; }
+  .multi-select-field { margin-bottom: 4px; }
+  .multi-select-tags { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border: 1px solid var(--border);
+    border-radius: 6px; min-height: 38px; cursor: pointer; align-items: center; }
+  .multi-select-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #eef2ff;
+    border-radius: 4px; font-size: 12px; }
+  .multi-select-tag .remove { cursor: pointer; font-weight: bold; margin-left: 2px; }
+  .multi-select-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff;
+    border: 1px solid var(--border); border-radius: 6px; max-height: 180px; overflow-y: auto; z-index: 50; }
+  .multi-select.open .multi-select-dropdown { display: block; }
+  .multi-select-option { padding: 8px 12px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .multi-select-option:hover { background: #f0f4ff; }
+  .multi-select-option input { margin: 0; }
+
+  /* Loading spinner */
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #e5e7eb; border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Utilities */
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .hidden { display: none !important; }
+  .mt-8 { margin-top: 8px; }
+  .mb-8 { margin-bottom: 8px; }
+  .gap-8 { gap: 8px; }
+  .inline { display: inline-flex; gap: 8px; align-items: center; }
+
+  /* ContentEditable */
+  [contenteditable] { padding: 8px; border: 1px solid var(--border); border-radius: 6px; min-height: 60px; outline: none; }
+  [contenteditable]:focus { border-color: var(--accent); }
+
+  /* File drop zone */
+  .drop-zone { border: 2px dashed #ccc; border-radius: 8px; padding: 24px; text-align: center; transition: all 0.2s; cursor: pointer; }
+  .drop-zone.drag-over { border-color: var(--accent); background: #f0f4ff; }
+  .file-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .file-chip { padding: 4px 10px; background: #eef2ff; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<h1>🔬 L2 压力测试 — 全动作覆盖</h1>
+
+<!-- ========== LOG PANEL ========== -->
+<div id="log-panel">
+  <div id="log-header"><span>📋 事件日志</span><button id="clear-log" onclick="clearLog()">清空</button></div>
+  <div id="log-list"></div>
+</div>
+
+<!-- ========== TOAST CONTAINER ========== -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ========== MODAL ========== -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">确认对话框</h3>
+    <p id="modal-body">此操作需要确认。</p>
+    <div class="modal-actions">
+      <button id="modal-cancel" onclick="closeModal()">取消</button>
+      <button id="modal-confirm" class="primary" onclick="confirmModal()">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+
+<!-- ====== 1. 复杂表单 ====== -->
+<section id="s-form">
+  <h2>📝 复杂表单</h2>
+  <label>用户名 <input id="username" name="username" type="text" placeholder="请输入用户名" autocomplete="off"></label>
+  <label>邮箱 <input id="reg-email" name="email" type="email" placeholder="user@example.com" autocomplete="off"></label>
+  <label>密码 <input id="reg-pwd" name="password" type="password" placeholder="至少8位" autocomplete="new-password"></label>
+  <label>年龄 <input id="age" name="age" type="number" min="1" max="150" placeholder="18" autocomplete="off"></label>
+  <label>生日 <input id="birthday" name="birthday" type="date"></label>
+  <label>个人主页 <input id="homepage" name="homepage" type="url" placeholder="https://" autocomplete="off"></label>
+  <label>简介 <textarea id="bio" name="bio" rows="2" placeholder="介绍一下自己…"></textarea></label>
+  <label>国家
+    <select id="country" name="country">
+      <option value="">请选择</option>
+      <option value="cn">🇨🇳 中国</option>
+      <option value="us">🇺🇸 美国</option>
+      <option value="jp">🇯🇵 日本</option>
+      <option value="de">🇩🇪 德国</option>
+      <option value="fr">🇫🇷 法国</option>
+      <option value="gb">🇬🇧 英国</option>
+    </select>
+  </label>
+  <div class="multi-select-field">
+    <label>城市（多选）</label>
+    <div class="multi-select" id="city-multi">
+      <div class="multi-select-tags" onclick="toggleMultiSelect('city-multi')">
+        <span style="color:#999;font-size:13px">点击选择城市…</span>
+      </div>
+      <div class="multi-select-dropdown">
+        <label class="multi-select-option"><input type="checkbox" value="bj" onchange="updateMultiSelect('city-multi')"> 北京</label>
+        <label class="multi-select-option"><input type="checkbox" value="sh" onchange="updateMultiSelect('city-multi')"> 上海</label>
+        <label class="multi-select-option"><input type="checkbox" value="sz" onchange="updateMultiSelect('city-multi')"> 深圳</label>
+        <label class="multi-select-option"><input type="checkbox" value="gz" onchange="updateMultiSelect('city-multi')"> 广州</label>
+        <label class="multi-select-option"><input type="checkbox" value="cd" onchange="updateMultiSelect('city-multi')"> 成都</label>
+      </div>
+    </div>
+  </div>
+  <fieldset style="border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:8px">
+    <legend style="font-size:13px;color:#555">性别</legend>
+    <label style="display:inline-flex;align-items:center;gap:4px;margin-right:16px"><input type="radio" name="gender" value="m"> 男</label>
+    <label style="display:inline-flex;align-items:center;gap:4px;margin-right:16px"><input type="radio" name="gender" value="f"> 女</label>
+    <label style="display:inline-flex;align-items:center;gap:4px"><input type="radio" name="gender" value="o"> 其他</label>
+  </fieldset>
+  <label style="display:inline-flex;align-items:center;gap:6px;margin-bottom:8px">
+    <input type="checkbox" id="agree-terms"> 同意服务条款
+  </label>
+  <label style="display:inline-flex;align-items:center;gap:6px;margin-bottom:8px">
+    <input type="checkbox" id="subscribe"> 订阅邮件通知
+  </label>
+  <div class="row mt-8">
+    <button id="form-submit" class="primary" onclick="handleFormSubmit()">提交表单</button>
+    <button id="form-reset" onclick="handleFormReset()">重置</button>
+    <button id="form-fill-demo" class="success" onclick="fillDemoData()">填充示例</button>
+  </div>
+  <div id="form-result" style="margin-top:8px;font-size:13px;color:#666"></div>
+</section>
+
+<!-- ====== 2. 富文本编辑器 ====== -->
+<section id="s-rich-text">
+  <h2>✏️ 富文本编辑 (contentEditable)</h2>
+  <div class="row mb-8 gap-8">
+    <button onclick="execCmd('bold')" title="加粗"><b>B</b></button>
+    <button onclick="execCmd('italic')" title="斜体"><i>I</i></button>
+    <button onclick="execCmd('underline')" title="下划线"><u>U</u></button>
+    <button onclick="execCmd('insertUnorderedList')" title="列表">•</button>
+    <button onclick="execCmd('insertOrderedList')" title="编号">1.</button>
+  </div>
+  <div id="rich-editor" contenteditable="true" data-placeholder="在这里输入富文本内容…支持加粗、斜体、列表等"></div>
+  <div class="mt-8" style="font-size:12px;color:#888">💡 测试 fill 对 contentEditable 元素的操作</div>
+</section>
+
+<!-- ====== 3. 悬停交互区 ====== -->
+<section id="s-hover">
+  <h2>🖱️ 悬停交互区</h2>
+  <div class="row gap-8">
+    <div class="dropdown">
+      <button id="menu-trigger">悬停打开菜单 ▾</button>
+      <nav class="dropdown-menu" aria-label="主菜单">
+        <a href="#" id="menu-item-1" onclick="logEvt('菜单项1被点击','ok');return false">菜单项 A（📄 新建文档）</a>
+        <a href="#" id="menu-item-2" onclick="logEvt('菜单项2被点击','ok');return false">📂 打开文件</a>
+        <a href="#" id="menu-item-3" onclick="logEvt('菜单项3被点击','ok');return false">💾 保存</a>
+        <hr style="margin:4px 0;border-color:#eee">
+        <a href="#" id="menu-item-4" onclick="logEvt('菜单项4被点击','ok');return false">⚙️ 设置</a>
+      </nav>
+    </div>
+    <div class="tooltip-wrap">
+      <button id="tooltip-btn">悬停看提示</button>
+      <span class="tooltip-text">这是一个 tooltip 提示信息</span>
+    </div>
+    <div class="tooltip-wrap">
+      <button id="tooltip-btn-b" style="background:#fef3c7">悬停看另一个</button>
+      <span class="tooltip-text">另一个 tooltip — 内容较长用于测试</span>
+    </div>
+  </div>
+  <div class="mt-8 row gap-8">
+    <div id="hover-color-box" style="width:80px;height:40px;background:#e5e7eb;border-radius:6px;transition:background 0.3s;text-align:center;line-height:40px;font-size:12px"
+      onmouseenter="this.style.background='#fbbf24';logEvt('hover触发颜色变化','ok')"
+      onmouseleave="this.style.background='#e5e7eb'">悬停变色</div>
+    <div id="hover-counter" style="padding:4px 12px;background:#f0f0f0;border-radius:6px;font-size:12px">悬停次数: 0</div>
+  </div>
+</section>
+
+<!-- ====== 4. 点击测试区 ====== -->
+<section id="s-click">
+  <h2>👆 点击测试区</h2>
+  <div class="row gap-8">
+    <button id="click-counter-btn" onclick="clickCounter()">点击计数: <span id="click-count">0</span></button>
+    <button id="dblclick-btn" ondblclick="logEvt('双击触发','ok')">双击我</button>
+    <button id="ctx-btn" oncontextmenu="event.preventDefault();logEvt('右键菜单触发','ok')">右键我</button>
+    <button id="disabled-btn" disabled>禁用按钮</button>
+    <button id="hidden-trigger-btn" onclick="document.getElementById('hidden-target').classList.toggle('hidden')">切换隐藏元素</button>
+  </div>
+  <div id="hidden-target" class="hidden mt-8" style="padding:8px;background:#fef3c7;border-radius:6px">
+    这是一个动态显示/隐藏的元素 <button id="hidden-inner-btn" onclick="logEvt('隐藏区域按钮被点击','ok')">点我</button>
+  </div>
+  <div class="mt-8 row gap-8">
+    <a id="anchor-link" href="#s-click" onclick="logEvt('锚点链接被点击','ok');return false">锚点链接 (href=#s-click)</a>
+    <span id="clickable-span" onclick="logEvt('span被点击','ok')" style="cursor:pointer;color:var(--accent);text-decoration:underline">可点击的 span</span>
+    <div id="clickable-div" onclick="logEvt('div被点击','ok')" style="cursor:pointer;padding:6px 12px;background:#eef2ff;border-radius:6px">可点击的 div</div>
+  </div>
+</section>
+
+<!-- ====== 5. 键盘测试区 ====== -->
+<section id="s-keyboard">
+  <h2>⌨️ 键盘测试区</h2>
+  <label>按键测试输入框 <input id="kbd-input" type="text" placeholder="在这里按键测试" autocomplete="off"></label>
+  <div id="kbd-display" style="padding:8px;background:#f0f0f0;border-radius:6px;font-size:13px;min-height:28px">按下任意键…</div>
+  <div class="mt-8 row gap-8">
+    <button onclick="document.getElementById('kbd-input').focus();logEvt('焦点设置到输入框','ok')">聚焦输入框</button>
+    <span style="font-size:12px;color:#888">支持 Ctrl/Shift/Alt 组合键检测</span>
+  </div>
+</section>
+
+<!-- ====== 6. 滚动测试区 ====== -->
+<section id="s-scroll">
+  <h2>📜 滚动测试区</h2>
+  <div class="scroll-box" id="scroll-container">
+    <p>第 1 行 — 滚动容器顶部</p><p>第 2 行</p><p>第 3 行</p><p>第 4 行</p>
+    <p>第 5 行</p><p>第 6 行</p><p>第 7 行</p><p>第 8 行</p>
+    <p>第 9 行</p><p>第 10 行</p><p>第 11 行</p><p>第 12 行</p>
+    <p>第 13 行</p><p>第 14 行</p><p>第 15 行</p>
+    <button id="scroll-deep-btn" onclick="logEvt('滚动容器深处的按钮被点击','ok')">滚动容器深处的按钮</button>
+    <p>第 16 行</p><p>第 17 行</p><p>第 18 行</p><p>第 19 行</p><p>第 20 行 — 底部</p>
+  </div>
+  <div class="mt-8 row gap-8">
+    <button onclick="scrollToTop()">滚动到顶部</button>
+    <button onclick="scrollToBottom()">滚动到底部</button>
+    <button onclick="scrollToDeepBtn()">滚动到深处按钮</button>
+  </div>
+</section>
+
+<!-- ====== 7. 异步加载区 ====== -->
+<section id="s-async">
+  <h2>⏳ 异步加载区</h2>
+  <div class="row gap-8 mb-8">
+    <button id="load-delay-btn" onclick="loadWithDelay(2000)">2秒后加载内容</button>
+    <button id="load-delay-btn-b" onclick="loadWithDelay(4000)">4秒后加载内容</button>
+    <button id="load-random-btn" onclick="loadRandomContent()">随机加载</button>
+  </div>
+  <div id="async-target" style="padding:12px;border:1px dashed #ccc;border-radius:6px;min-height:50px;color:#999">
+    ⏳ 尚未加载 — 点击上方按钮触发异步加载
+  </div>
+  <div class="mt-8">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <span style="font-size:12px;color:#888">进度: <span id="progress-text">0%</span></span>
+  </div>
+</section>
+
+<!-- ====== 8. 模态对话框 ====== -->
+<section id="s-modal">
+  <h2>🪟 模态对话框</h2>
+  <div class="row gap-8">
+    <button id="open-modal-btn" onclick="openModal('确认删除', '确定要删除选中的 3 条记录吗？此操作不可撤销。', '删除')">打开确认对话框</button>
+    <button id="open-modal-info-btn" onclick="openModal('提示信息', '操作已成功完成！', '知道了')">打开信息对话框</button>
+  </div>
+  <div style="font-size:12px;color:#888;margin-top:6px">💡 测试 click 对 overlay 元素的定位</div>
+</section>
+
+<!-- ====== 9. 手风琴/折叠面板 ====== -->
+<section id="s-accordion">
+  <h2>📂 折叠面板</h2>
+  <div class="accordion" id="acc-1">
+    <div class="accordion-header" onclick="toggleAccordion('acc-1')">面板一：基本信息 <span>▾</span></div>
+    <div class="accordion-body">
+      <p>这是面板一的内容。包含 <button id="acc-btn-1" onclick="logEvt('面板一按钮被点击','ok')">面板内按钮</button></p>
+    </div>
+  </div>
+  <div class="accordion" id="acc-2">
+    <div class="accordion-header" onclick="toggleAccordion('acc-2')">面板二：高级设置 <span>▾</span></div>
+    <div class="accordion-body">
+      <label>设置项 A <input id="acc-setting-a" type="text" placeholder="输入值"></label>
+      <button id="acc-btn-2" onclick="logEvt('面板二按钮被点击','ok')">保存设置</button>
+    </div>
+  </div>
+  <div class="accordion" id="acc-3">
+    <div class="accordion-header" onclick="toggleAccordion('acc-3')">面板三：关于 <span>▾</span></div>
+    <div class="accordion-body"><p>版本 3.0.0 — 这是一个复杂的测试页面。</p></div>
+  </div>
+</section>
+
+<!-- ====== 10. 标签页 ====== -->
+<section id="s-tabs">
+  <h2>📑 标签页</h2>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-1" onclick="switchTab('tab-1')">标签一</button>
+    <button class="tab-btn" data-tab="tab-2" onclick="switchTab('tab-2')">标签二</button>
+    <button class="tab-btn" data-tab="tab-3" onclick="switchTab('tab-3')">标签三</button>
+  </div>
+  <div class="tab-panel active" id="tab-1">
+    <p>标签一内容 — <button id="tab-1-btn" onclick="logEvt('标签一按钮被点击','ok')">标签一按钮</button></p>
+    <input id="tab-1-input" type="text" placeholder="标签一输入框">
+  </div>
+  <div class="tab-panel" id="tab-2">
+    <p>标签二内容 — <button id="tab-2-btn" onclick="logEvt('标签二按钮被点击','ok')">标签二按钮</button></p>
+    <label><input type="checkbox" id="tab-2-check"> 标签二选项</label>
+  </div>
+  <div class="tab-panel" id="tab-3">
+    <p>标签三内容 — 包含 <span id="tab-3-span" style="color:var(--accent);font-weight:600">重要文本</span></p>
+    <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:60%"></div></div>
+  </div>
+</section>
+
+<!-- ====== 11. 数据表格 ====== -->
+<section id="s-table">
+  <h2>📊 数据表格</h2>
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">名称 ⇅</th>
+        <th onclick="sortTable(1)">类别 ⇅</th>
+        <th onclick="sortTable(2)">状态 ⇅</th>
+        <th onclick="sortTable(3)">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-id="1"><td>项目 Alpha</td><td>开发</td><td><span style="color:#16a34a">● 活跃</span></td><td><button onclick="logEvt('表格行1操作','ok')">详情</button></td></tr>
+      <tr data-id="2"><td>项目 Beta</td><td>设计</td><td><span style="color:#f59e0b">● 暂停</span></td><td><button onclick="logEvt('表格行2操作','ok')">详情</button></td></tr>
+      <tr data-id="3"><td>项目 Gamma</td><td>测试</td><td><span style="color:#16a34a">● 活跃</span></td><td><button onclick="logEvt('表格行3操作','ok')">详情</button></td></tr>
+      <tr data-id="4"><td>项目 Delta</td><td>部署</td><td><span style="color:#dc2626">● 错误</span></td><td><button onclick="logEvt('表格行4操作','ok')">详情</button></td></tr>
+      <tr data-id="5"><td>项目 Epsilon</td><td>开发</td><td><span style="color:#16a34a">● 活跃</span></td><td><button onclick="logEvt('表格行5操作','ok')">详情</button></td></tr>
+    </tbody>
+  </table>
+  <div class="row gap-8 mt-8">
+    <button id="table-select-all" onclick="selectAllRows()">全选</button>
+    <button id="table-deselect" onclick="deselectAllRows()">取消选择</button>
+    <span style="font-size:12px;color:#888">点击行选中</span>
+  </div>
+</section>
+
+<!-- ====== 12. 搜索自动补全 ====== -->
+<section id="s-search">
+  <h2>🔍 搜索自动补全</h2>
+  <input id="search-input" type="text" placeholder="搜索水果名称…" autocomplete="off"
+    oninput="handleSearch(this.value)" onfocus="handleSearch(this.value)">
+  <div class="search-results" id="search-results"></div>
+  <div id="search-selected" style="margin-top:6px;font-size:13px;color:#666"></div>
+</section>
+
+<!-- ====== 13. 文件上传 ====== -->
+<section id="s-upload">
+  <h2>📎 文件上传</h2>
+  <label>选择文件 <input id="file-input" type="file" aria-label="选择文件上传" multiple></label>
+  <div class="drop-zone" id="drop-zone"
+    ondragover="event.preventDefault();this.classList.add('drag-over')"
+    ondragleave="this.classList.remove('drag-over')"
+    ondrop="handleDrop(event)">
+    <p style="font-size:14px;color:#888">拖拽文件到此处上传</p>
+    <p style="font-size:11px;color:#aaa">支持多个文件</p>
+  </div>
+  <div class="file-preview" id="file-preview"></div>
+</section>
+
+<!-- ====== 14. Shadow DOM ====== -->
+<section id="s-shadow">
+  <h2>🌑 Shadow DOM 组件</h2>
+  <div id="shadow-host"></div>
+  <div class="mt-8" style="font-size:12px;color:#888">💡 测试 snapshot 对 Shadow DOM 的遍历 + click/fill 对 shadowRoot 内元素的操作</div>
+</section>
+
+<!-- ====== 15. 嵌套 iframe ====== -->
+<section id="s-iframe">
+  <h2>🖼️ 嵌套 iframe</h2>
+  <iframe id="outer-frame" title="外层框架" style="width:100%;height:180px;border:1px solid var(--border);border-radius:6px"
+    srcdoc='<!DOCTYPE html><html><body style="font-family:system-ui;padding:10px">
+      <h4 style="margin:0 0 8px">外层 iframe</h4>
+      <label>iframe 输入框 <input id="frame-input" type="text" placeholder="iframe input"></label>
+      <button id="frame-btn" type="button">iframe 按钮</button>
+      <div id="frame-out" style="margin-top:6px;font-size:13px;color:#666">iframe 未操作</div>
+      <label>iframe 选择 <select id="frame-select"><option value="">选一个</option><option value="a">选项A</option><option value="b">选项B</option></select></label>
+      <script>
+        document.getElementById("frame-btn").addEventListener("click",function(){
+          document.getElementById("frame-out").textContent="iframe 按钮已点击";
+          parent.postMessage({type:"frame-click",from:"outer"},"*");
+        });
+        document.getElementById("frame-select").addEventListener("change",function(){
+          parent.postMessage({type:"frame-select",value:this.value},"*");
+        });
+      </script>
+    </body></html>'></iframe>
+  <div id="iframe-msg" style="margin-top:4px;font-size:12px;color:#888">等待 iframe 消息…</div>
+</section>
+
+<!-- ====== 16. 动态内容/无限滚动模拟 ====== -->
+<section id="s-dynamic">
+  <h2>🔄 动态内容</h2>
+  <button id="add-items-btn" onclick="addDynamicItems()">添加 10 个动态元素</button>
+  <button id="remove-items-btn" onclick="removeDynamicItems()">移除所有动态元素</button>
+  <div id="dynamic-container" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"></div>
+  <div style="font-size:12px;color:#888;margin-top:6px">💡 测试 snapshot 对动态 DOM 变化的 ref 重新分配</div>
+</section>
+
+</div><!-- /grid -->
+
+<script>
+// ══════════════════════════════════════════════
+// Logging
+// ══════════════════════════════════════════════
+function logEvt(msg, type) {
+  type = type || 'info';
+  var el = document.getElementById('log-list');
+  var div = document.createElement('div');
+  div.className = type;
+  div.textContent = new Date().toLocaleTimeString() + ' ' + msg;
+  el.insertBefore(div, el.firstChild);
+  if (el.children.length > 200) el.removeChild(el.lastChild);
+}
+function clearLog() { document.getElementById('log-list').innerHTML = ''; }
+
+// ══════════════════════════════════════════════
+// Toast
+// ══════════════════════════════════════════════
+function showToast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toast-container');
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(function(){ toast.remove(); }, 3000);
+}
+
+// ══════════════════════════════════════════════
+// Modal
+// ══════════════════════════════════════════════
+var modalCallback = null;
+function openModal(title, body, confirmText) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  document.getElementById('modal-confirm').textContent = confirmText || '确认';
+  document.getElementById('modal-overlay').classList.add('open');
+  logEvt('模态框打开: ' + title, 'warn');
+  return new Promise(function(resolve) {
+    modalCallback = resolve;
+    document.getElementById('modal-cancel').focus();
+  });
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  if (modalCallback) { modalCallback(false); modalCallback = null; }
+  logEvt('模态框取消', 'ok');
+}
+function confirmModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  if (modalCallback) { modalCallback(true); modalCallback = null; }
+  logEvt('模态框确认', 'ok');
+  showToast('操作已确认', 'success');
+}
+
+// ══════════════════════════════════════════════
+// Accordion
+// ══════════════════════════════════════════════
+function toggleAccordion(id) {
+  var el = document.getElementById(id);
+  el.classList.toggle('open');
+  var span = el.querySelector('.accordion-header span');
+  span.textContent = el.classList.contains('open') ? '▴' : '▾';
+}
+
+// ══════════════════════════════════════════════
+// Tabs
+// ══════════════════════════════════════════════
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelector('[data-tab="' + tabId + '"]').classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById(tabId).classList.add('active');
+  logEvt('切换到标签: ' + tabId, 'ok');
+}
+
+// ══════════════════════════════════════════════
+// Multi-select
+// ══════════════════════════════════════════════
+function toggleMultiSelect(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+function updateMultiSelect(id) {
+  var container = document.getElementById(id);
+  var tags = container.querySelector('.multi-select-tags');
+  var checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+  var nameMap = { bj: '北京', sh: '上海', sz: '深圳', gz: '广州', cd: '成都' };
+  tags.innerHTML = '';
+  if (checkboxes.length === 0) {
+    tags.innerHTML = '<span style="color:#999;font-size:13px">点击选择城市…</span>';
+  } else {
+    checkboxes.forEach(function(cb) {
+      var tag = document.createElement('span');
+      tag.className = 'multi-select-tag';
+      var displayName = nameMap[cb.value] || cb.value;
+      tag.innerHTML = displayName + ' <span class="remove" onclick="event.stopPropagation();cb.checked=false;updateMultiSelect(\'' + id + '\')">×</span>';
+      tags.appendChild(tag);
+    });
+  }
+}
+function getSelectedCities() {
+  return Array.from(document.querySelectorAll('#city-multi input[type="checkbox"]:checked')).map(function(cb){
+    return cb.value;
+  });
+}
+
+// ══════════════════════════════════════════════
+// Click counter
+// ══════════════════════════════════════════════
+var clickCount = 0;
+function clickCounter() {
+  clickCount++;
+  document.getElementById('click-count').textContent = clickCount;
+  logEvt('点击计数: ' + clickCount, 'ok');
+}
+
+// ══════════════════════════════════════════════
+// Scroll helpers
+// ══════════════════════════════════════════════
+function scrollToTop() {
+  document.getElementById('scroll-container').scrollTo({top:0,behavior:'smooth'});
+}
+function scrollToBottom() {
+  var c = document.getElementById('scroll-container');
+  c.scrollTo({top:c.scrollHeight,behavior:'smooth'});
+}
+function scrollToDeepBtn() {
+  document.getElementById('scroll-deep-btn').scrollIntoView({block:'center',behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════
+// Async loading
+// ══════════════════════════════════════════════
+var asyncLoadTimer = null;
+function loadWithDelay(ms) {
+  var target = document.getElementById('async-target');
+  target.innerHTML = '<div class="spinner"></div> <span style="color:#888">加载中…</span>';
+  logEvt('开始异步加载 (' + ms + 'ms)', 'warn');
+  if (asyncLoadTimer) clearTimeout(asyncLoadTimer);
+  asyncLoadTimer = setTimeout(function() {
+    target.innerHTML = '<div style="color:#16a34a;font-weight:600">✅ 异步内容已加载完成！</div>' +
+      '<p style="margin-top:8px">这是延迟 ' + ms + 'ms 后加载的内容。</p>' +
+      '<button id="async-loaded-btn" onclick="logEvt(\'异步加载的按钮被点击\',\'ok\')">异步加载的按钮</button>';
+    logEvt('异步内容就绪 (' + ms + 'ms)', 'ok');
+    showToast('内容加载完成', 'success');
+  }, ms);
+}
+function loadRandomContent() {
+  var delay = 500 + Math.random() * 3000;
+  loadWithDelay(Math.round(delay));
+}
+
+// ══════════════════════════════════════════════
+// Progress
+// ══════════════════════════════════════════════
+(function() {
+  var progress = 0;
+  var progressTimer = setInterval(function() {
+    progress = (progress + 5) % 110;
+    if (progress > 100) progress = 0;
+    document.getElementById('progress-fill').style.width = progress + '%';
+    document.getElementById('progress-text').textContent = progress + '%';
+  }, 1500);
+})();
+
+// ══════════════════════════════════════════════
+// Rich text
+// ══════════════════════════════════════════════
+function execCmd(cmd) {
+  document.execCommand(cmd, false, null);
+  document.getElementById('rich-editor').focus();
+}
+
+// ══════════════════════════════════════════════
+// Table
+// ══════════════════════════════════════════════
+document.getElementById('data-table').addEventListener('click', function(e) {
+  var tr = e.target.closest('tr');
+  if (!tr || !tr.parentElement.tagName === 'TBODY') return;
+  if (e.target.tagName === 'BUTTON') return;
+  tr.classList.toggle('selected');
+  logEvt('表格行 ' + tr.dataset.id + ' ' + (tr.classList.contains('selected') ? '选中' : '取消选中'), 'ok');
+});
+function selectAllRows() {
+  document.querySelectorAll('#data-table tbody tr').forEach(function(tr){ tr.classList.add('selected'); });
+  logEvt('全选表格行', 'ok');
+}
+function deselectAllRows() {
+  document.querySelectorAll('#data-table tbody tr').forEach(function(tr){ tr.classList.remove('selected'); });
+  logEvt('取消选择表格行', 'ok');
+}
+var sortDir = {};
+function sortTable(col) {
+  var tbody = document.querySelector('#data-table tbody');
+  var rows = Array.from(tbody.querySelectorAll('tr'));
+  sortDir[col] = !sortDir[col];
+  rows.sort(function(a, b) {
+    var va = a.children[col].textContent.trim();
+    var vb = b.children[col].textContent.trim();
+    return sortDir[col] ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+  rows.forEach(function(r){ tbody.appendChild(r); });
+  logEvt('表格排序: 列' + (col+1) + ' ' + (sortDir[col] ? '升序' : '降序'), 'ok');
+}
+
+// ══════════════════════════════════════════════
+// Search
+// ══════════════════════════════════════════════
+var fruits = ['苹果 Apple','香蕉 Banana','橙子 Orange','草莓 Strawberry','葡萄 Grape','西瓜 Watermelon',
+  '芒果 Mango','蓝莓 Blueberry','桃子 Peach','梨 Pear','柠檬 Lemon','樱桃 Cherry',
+  '菠萝 Pineapple','猕猴桃 Kiwi','火龙果 Dragon Fruit','榴莲 Durian','荔枝 Lychee','龙眼 Longan'];
+function handleSearch(query) {
+  var results = document.getElementById('search-results');
+  if (!query || query.length < 1) { results.classList.remove('visible'); return; }
+  var matches = fruits.filter(function(f){ return f.toLowerCase().includes(query.toLowerCase()); });
+  results.innerHTML = matches.map(function(f, i){
+    return '<div class="search-item" data-idx="' + i + '" onclick="selectSearchResult(\'' + f.replace(/'/g,"\\'") + '\')">' + f + '</div>';
+  }).join('');
+  results.classList.add('visible');
+}
+function selectSearchResult(text) {
+  document.getElementById('search-input').value = text;
+  document.getElementById('search-results').classList.remove('visible');
+  document.getElementById('search-selected').textContent = '已选择: ' + text;
+  logEvt('搜索选择: ' + text, 'ok');
+}
+
+// ══════════════════════════════════════════════
+// File upload
+// ══════════════════════════════════════════════
+document.getElementById('file-input').addEventListener('change', function(e) {
+  showFilePreviews(Array.from(e.target.files));
+});
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag-over');
+  showFilePreviews(Array.from(e.dataTransfer.files));
+}
+function showFilePreviews(files) {
+  var preview = document.getElementById('file-preview');
+  preview.innerHTML = files.map(function(f){
+    return '<span class="file-chip">' + f.name + ' (' + (f.size/1024).toFixed(1) + 'KB)</span>';
+  }).join('');
+  logEvt('文件已选择: ' + files.length + ' 个', 'ok');
+}
+
+// ══════════════════════════════════════════════
+// Form
+// ══════════════════════════════════════════════
+function handleFormSubmit() {
+  var data = {
+    username: document.getElementById('username').value,
+    email: document.getElementById('reg-email').value,
+    password: document.getElementById('reg-pwd').value,
+    age: document.getElementById('age').value,
+    birthday: document.getElementById('birthday').value,
+    website: document.getElementById('homepage').value,
+    country: document.getElementById('country').value,
+    bio: document.getElementById('bio').value,
+    cities: getSelectedCities(),
+    agree: document.getElementById('agree-terms').checked,
+    subscribe: document.getElementById('subscribe').checked,
+    gender: document.querySelector('input[name="gender"]:checked')?.value || '',
+  };
+  document.getElementById('form-result').textContent = '提交数据: ' + JSON.stringify(data);
+  logEvt('表单提交: ' + data.username + ' | ' + data.email, 'ok');
+  showToast('表单已提交', 'success');
+}
+function handleFormReset() {
+  document.querySelectorAll('#s-form input[type="text"],#s-form input[type="email"],#s-form input[type="password"],#s-form input[type="number"],#s-form input[type="date"],#s-form input[type="url"],#s-form textarea').forEach(function(el){ el.value = ''; });
+  document.getElementById('country').value = '';
+  document.querySelectorAll('#s-form input[type="checkbox"],#s-form input[type="radio"]').forEach(function(el){ el.checked = false; });
+  updateMultiSelect('city-multi');
+  document.getElementById('city-multi').classList.remove('open');
+  document.getElementById('form-result').textContent = '';
+  logEvt('表单已重置', 'ok');
+}
+function fillDemoData() {
+  document.getElementById('username').value = '张三';
+  document.getElementById('reg-email').value = 'zhangsan@example.com';
+  document.getElementById('reg-pwd').value = 'Test1234!';
+  document.getElementById('age').value = '28';
+  document.getElementById('bio').value = '这是一段测试简介文本。';
+  document.getElementById('country').value = 'cn';
+  document.querySelector('input[name="gender"][value="m"]').checked = true;
+  document.getElementById('agree-terms').checked = true;
+  logEvt('已填充示例数据', 'ok');
+}
+
+// ══════════════════════════════════════════════
+// Dynamic items
+// ══════════════════════════════════════════════
+var dynamicCounter = 0;
+function addDynamicItems() {
+  var container = document.getElementById('dynamic-container');
+  for (var i = 0; i < 10; i++) {
+    dynamicCounter++;
+    var div = document.createElement('div');
+    div.className = 'dynamic-item';
+    div.style.cssText = 'padding:8px 12px;background:#eef2ff;border-radius:6px;font-size:13px;cursor:pointer';
+    div.textContent = '动态元素 #' + dynamicCounter;
+    div.onclick = function(){ logEvt(this.textContent + ' 被点击', 'ok'); };
+    container.appendChild(div);
+  }
+  logEvt('添加了 10 个动态元素 (总数: ' + dynamicCounter + ')', 'ok');
+}
+function removeDynamicItems() {
+  document.getElementById('dynamic-container').innerHTML = '';
+  dynamicCounter = 0;
+  logEvt('移除所有动态元素', 'ok');
+}
+
+// ══════════════════════════════════════════════
+// Keyboard capture (with global fallback for CDP pressKey)
+// ══════════════════════════════════════════════
+var kbdInput = document.getElementById('kbd-input');
+kbdInput.addEventListener('keydown', handleKbdKeydown);
+kbdInput.addEventListener('keyup', function(e) {
+  document.getElementById('kbd-display').textContent = 'keyup: ' + e.key;
+});
+// Global fallback: capture keydown at document level for non-focused CDP events
+document.addEventListener('keydown', function(e) {
+  if (e.target === kbdInput) return;
+  kbdInput.focus();
+  handleKbdKeydown(e);
+});
+function handleKbdKeydown(e) {
+  var mods = [];
+  if (e.ctrlKey) mods.push('Ctrl');
+  if (e.shiftKey) mods.push('Shift');
+  if (e.altKey) mods.push('Alt');
+  if (e.metaKey) mods.push('Meta');
+  var display = 'keydown: ' + e.key + (mods.length ? ' +' + mods.join('+') : '');
+  document.getElementById('kbd-display').textContent = display;
+  if (e.key === 'Enter') logEvt('按下 Enter 键', 'ok');
+  if (e.key === 'Escape') logEvt('按下 Escape 键', 'ok');
+}
+
+// ══════════════════════════════════════════════
+// Hover counter
+// ══════════════════════════════════════════════
+var hoverCount = 0;
+document.getElementById('hover-color-box').addEventListener('mouseenter', function() {
+  hoverCount++;
+  document.getElementById('hover-counter').textContent = '悬停次数: ' + hoverCount;
+});
+
+// ══════════════════════════════════════════════
+// iframe messages
+// ══════════════════════════════════════════════
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'frame-click') {
+    document.getElementById('iframe-msg').textContent = '收到 iframe 消息: 按钮被点击';
+    logEvt('iframe 按钮被点击 (postMessage)', 'ok');
+  }
+  if (e.data && e.data.type === 'frame-select') {
+    document.getElementById('iframe-msg').textContent = '收到 iframe 消息: select=' + e.data.value;
+    logEvt('iframe select 变化: ' + e.data.value, 'ok');
+  }
+});
+
+// ══════════════════════════════════════════════
+// Shadow DOM
+// ══════════════════════════════════════════════
+(function() {
+  var host = document.getElementById('shadow-host');
+  var root = host.attachShadow({ mode: 'open' });
+  root.innerHTML = '<style>' +
+    ':host { display: block; border: 1px solid #d0d0d0; border-radius: 8px; padding: 12px; }' +
+    'button { padding: 8px 16px; border: 1px solid #d0d0d0; border-radius: 6px; background: #eef2ff; cursor: pointer; font-size: 13px; margin: 4px; }' +
+    'button:hover { background: #dbe4ff; }' +
+    'input { padding: 8px; border: 1px solid #d0d0d0; border-radius: 6px; width: 100%; margin-bottom: 8px; }' +
+    '.counter { font-size: 13px; color: #666; margin-top: 4px; }' +
+    '</style>' +
+    '<div><strong>Shadow DOM 组件</strong></div>' +
+    '<input id="shadow-input" type="text" placeholder="shadow input">' +
+    '<div style="display:flex;gap:8px">' +
+    '<button id="shadow-btn-a">Shadow 按钮 A</button>' +
+    '<button id="shadow-btn-b">Shadow 按钮 B</button>' +
+    '<button id="shadow-btn-c">Shadow 按钮 C</button>' +
+    '</div>' +
+    '<div class="counter" id="shadow-counter">按钮点击: 0</div>';
+  var count = 0;
+  root.getElementById('shadow-btn-a').addEventListener('click', function() {
+    count++; root.getElementById('shadow-counter').textContent = '按钮点击: ' + count + ' (最后: A)';
+    logEvt('Shadow 按钮 A 被点击', 'ok');
+  });
+  root.getElementById('shadow-btn-b').addEventListener('click', function() {
+    count++; root.getElementById('shadow-counter').textContent = '按钮点击: ' + count + ' (最后: B)';
+    logEvt('Shadow 按钮 B 被点击', 'ok');
+  });
+  root.getElementById('shadow-btn-c').addEventListener('click', function() {
+    count++; root.getElementById('shadow-counter').textContent = '按钮点击: ' + count + ' (最后: C)';
+    logEvt('Shadow 按钮 C 被点击', 'ok');
+  });
+  root.getElementById('shadow-input').addEventListener('input', function(e) {
+    logEvt('Shadow input: ' + e.target.value.slice(0, 20), 'ok');
+  });
+})();
+
+// ══════════════════════════════════════════════
+// Expose for evaluate testing
+// ══════════════════════════════════════════════
+window.__testState = {
+  clickCount: function(){ return clickCount; },
+  hoverCount: function(){ return hoverCount; },
+  dynamicCounter: function(){ return dynamicCounter; },
+  getFormData: function() {
+    return {
+      username: document.getElementById('username').value,
+      email: document.getElementById('reg-email').value,
+      country: document.getElementById('country').value,
+      cities: getSelectedCities(),
+      agree: document.getElementById('agree-terms').checked,
+      subscribe: document.getElementById('subscribe').checked,
+      gender: document.querySelector('input[name="gender"]:checked')?.value || '',
+    };
+  },
+  getTableRows: function() {
+    return Array.from(document.querySelectorAll('#data-table tbody tr')).map(function(tr){
+      return { id: tr.dataset.id, name: tr.children[0].textContent.trim(), selected: tr.classList.contains('selected') };
+    });
+  },
+};
+window.__testLog = logEvt;
+window.__testToast = showToast;
+
+// Initial log
+logEvt('L2 压力测试页面已就绪', 'ok');
+console.log('[L2 Stress Test] Page ready — ' + document.querySelectorAll('button, input, textarea, select, [contenteditable], a, [role]').length + ' interactive elements');
+</script>
+</body>
+</html>
