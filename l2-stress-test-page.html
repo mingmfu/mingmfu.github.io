@@ -818,9 +818,15 @@ kbdInput.addEventListener('keyup', function(e) {
   document.getElementById('kbd-display').textContent = 'keyup: ' + e.key;
 });
 // Global fallback: capture keydown at document level for non-focused CDP events
+// 注意：不能调用 kbdInput.focus()——那会把焦点从表单输入框抢走，
+// 导致在表单里打字时字符被拐进键盘测试输入框（详见提交说明）。
 document.addEventListener('keydown', function(e) {
   if (e.target === kbdInput) return;
-  kbdInput.focus();
+  // 用户正在其他可编辑区域输入（表单输入框/文本域/富文本）—— 不打扰，让事件正常传播
+  var t = e.target;
+  var editable = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+  if (editable) return;
+  // 仅记录按键显示，绝不抢焦点（保留非聚焦场景下 CDP pressKey 可被检测的能力）
   handleKbdKeydown(e);
 });
 function handleKbdKeydown(e) {
