@@ -17,6 +17,8 @@
 <tr>
  <td>
 <h1><center>A Practical Verification Framework for Preemptive OS Kernels</center></h1>
+<p style="text-align:center"><strong>CertiuCOS2 · CAV 2016 · Rocq 9.2 port</strong><br />
+<a href="https://gitcode.com/brightfu/CertiuCOS2">Source code and project README on GitCode</a></p>
   </td>
 </tr>
 
@@ -86,31 +88,36 @@ In CAV 2016 (July 2016)<br />
 
 <tr>
  <td>
-<h3>Implementation </h3>  
-
-
-
-
+<h3>Source code and Rocq build</h3>
+<p>
+The current <a href="https://gitcode.com/brightfu/CertiuCOS2">CertiuCOS2 repository on GitCode</a>
+contains the research framework, uC/OS-II specifications and proofs, and the Rocq 9.2 port.
+All 224 proof source files are included in the build and independent kernel-checking targets.
+</p>
 <ul>
-<li>
- <a href="README.txt">README.txt</a> : this file describes the code structure and compilation instructions for the entire Coq package. Please read it first and download  
- the Coq package from the links given as below. "README.txt" can also be found in the Coq package. 
-</li>
-<br>
-<li>Download our Coq implementation (packaged as a <a href="https://www.virtualbox.org/">VirtualBox</a> virtual machine) from : <a href="http://kyhcs.ustcsz.edu.cn/~xfw/CAV_CertiOS.ova">CAV_CertiOS.ova</a> (<a href="http://kyhcs.ustcsz.edu.cn/~xfw/CAV_CertiOS.zip">zipped</a>) </li>
-<br>
-<li> <a href="htmldoc/index-coq.html"> Browse the Coq development online </a> 
-<br>
-(Here proofs are hidden for readability, and the complete proofs can be found in the Coq package.)
+<li><a href="https://gitcode.com/brightfu/CertiuCOS2">Project README</a>:
+project overview, supported toolchain, build and verification commands, and a guide to the source tree.</li>
+<li>Verification scope and trust boundary: the port preserves the original theorem statements and assumptions.
+The README documents inherited axioms and known model limitations; successful kernel checking does not establish the consistency of those assumptions.</li>
+</ul>
+<h3>Original CAV 2016 artifact</h3>
+<p>These materials document the original Coq development. Use the GitCode README above for the current Rocq build.</p>
+<ul>
+<li><a href="README.txt">Original README</a>: historical code structure and compilation instructions.</li>
+<li>Original <a href="https://www.virtualbox.org/">VirtualBox</a> image:
+<a href="http://kyhcs.ustcsz.edu.cn/~xfw/CAV_CertiOS.ova">CAV_CertiOS.ova</a>
+(<a href="http://kyhcs.ustcsz.edu.cn/~xfw/CAV_CertiOS.zip">zipped</a>).</li>
+<li><a href="htmldoc/index-coq.html">Browse the original Coq development online</a>.
+Proofs are hidden in this historical rendering; complete proof sources are available in the GitCode repository.</li>
 </ul>
  </td>
 </tr>
 <tr>
  <td>
-<h3>People</h3>
+<h3>Paper authors (affiliations in 2016)</h3>
 <ul>
 <li> Fengwei Xu</a>, USTC </li>
-<li><a href="https://brightfu.github.io/">Ming Fu</a>, USTC</li>
+<li><a href="https://mingmfu.github.io/">Ming Fu</a>, USTC</li>
 <li><a href="https://cs.nju.edu.cn/xyfeng/">Xinyu Feng</a>, USTC</li>
 <li> Xiaoran Zhang</a>, USTC </li>
 <li> Hui Zhang</a>, USTC </li>
