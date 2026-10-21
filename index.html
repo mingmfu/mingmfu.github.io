@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Ming Fu (付明), Chief Expert at Huawei Fields Lab in Shanghai. Research in operating systems, concurrency, weak memory models, and formal verification.">
+  <meta name="description" content="Ming Fu (付明), Chief Expert at Huawei Fields Lab in Shanghai. Research in operating systems, concurrency, formal verification, and parallel graphics rendering.">
   <title>Ming Fu · Operating Systems and Formal Verification</title>
   <link rel="icon" href="ming.jpg" type="image/jpeg">
   <link rel="stylesheet" href="css/styles.css?v=20261021">
@@ -26,8 +26,8 @@
         <p class="contact"><a href="mailto:ming.fu@huawei.com">ming.fu@huawei.com</a></p>
         <ul class="profile-links" aria-label="Profile links">
           <li><a href="fuming-cv.pdf?v=20261021">CV</a></li>
-          <li><a href="bio/ming-fu-bio-en.txt?v=20261021">English bio</a></li>
-          <li><a href="bio/ming-fu-bio-zh.txt?v=20261021" lang="zh-Hans">中文简介</a></li>
+          <li><a href="bio/ming-fu-bio-en.txt?v=20261021-rendering">English bio</a></li>
+          <li><a href="bio/ming-fu-bio-zh.txt?v=20261021-rendering" lang="zh-Hans">中文简介</a></li>
           <li><a href="https://gitcode.com/brightfu">GitCode</a></li>
         </ul>
       </div>
@@ -36,10 +36,15 @@
 
     <main id="main">
       <section class="introduction" id="research" aria-label="Research interests">
-        <p>I work on operating systems and formal verification. My research focuses on
-          concurrent programs, synchronization, and weak memory models.</p>
-        <p>Recent work includes verified memory allocation and work stealing, as well as
-          parallel rendering and tracing on mobile devices. Some of our work on
+        <p>I work on operating systems, concurrent programming, and formal verification.
+          My research includes synchronization and weak memory models, as well as
+          parallel graphics rendering on mobile devices.</p>
+        <p>Our recent graphics work includes <a href="papers/dvsync.pdf">D-VSync</a>
+          (ASPLOS 2025), which decouples rendering from display refresh, and
+          <a href="papers/osdi25-final255.pdf">Spars</a> (OSDI 2025), which parallelizes
+          the OS rendering service through out-of-order execution and in-order commit.</p>
+        <p>I also work on verified memory allocation, work stealing, and mobile tracing.
+          Some of our work on
           synchronization is available in <a href="https://github.com/open-s4c/libvsync">libvsync</a>.</p>
       </section>
 
