@@ -51,7 +51,7 @@ h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.5; }
 .section-heading h2 { margin-bottom: 0; }
 .note { margin: 0; color: var(--muted); font-size: 12px; }
 .publication-group { display: grid; grid-template-columns: 72px minmax(0, 1fr); column-gap: 25px; row-gap: 22px; margin-top: 28px; }
-.pub-year { padding-top: 2px; color: var(--muted); font-size: 13px; font-weight: 400; }
+.pub-year { padding-top: 2px; color: var(--muted); font-size: 13px; font-weight: 400; font-variant-numeric: tabular-nums; }
 .pub-item { grid-column: 2; min-width: 0; }
 .pub-title { margin-bottom: 5px; font-family: var(--serif); font-size: 18px; line-height: 1.4; }
 .pub-title a { text-decoration: none; }
@@ -68,10 +68,10 @@ h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.5; }
 .software-list p { margin: 0; max-width: 78ch; font-size: 15px; }
 .experience-list, .talk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
 .experience-list li { display: grid; grid-template-columns: 158px minmax(0, 1fr); gap: 20px; }
-.period { color: var(--muted); font-size: 13px; line-height: 1.7; padding-top: 2px; }
+.period { color: var(--muted); font-size: 13px; line-height: 1.7; padding-top: 2px; font-variant-numeric: tabular-nums; }
 .experience-list p, .talk-list p { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
 .talk-list li { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 25px; }
-.talk-list { font-size: 15px; }
+.talk-list h3 { font-size: 15px; overflow-wrap: anywhere; }
 .footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; color: var(--muted); font-size: 12px; }
 .footer p { margin: 0; }
 
